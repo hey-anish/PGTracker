@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Poker Weekly Tracker</title>
+
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -22,9 +23,15 @@
       box-shadow: 0 2px 10px rgba(0,0,0,0.08);
     }
 
-    h1 { margin-bottom: 6px; font-size: 26px; }
-    h2 { margin: 0 0 12px; font-size: 20px; }
-    .subtitle { color: #666; margin-bottom: 20px; }
+    h1 {
+      margin-bottom: 6px;
+      font-size: 26px;
+    }
+
+    .subtitle {
+      color: #666;
+      margin-bottom: 20px;
+    }
 
     .settings {
       display: grid;
@@ -49,6 +56,10 @@
       box-sizing: border-box;
     }
 
+    .table-wrap {
+      overflow-x: auto;
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
@@ -62,8 +73,14 @@
       vertical-align: middle;
     }
 
-    th { background: #f3f4f6; font-size: 13px; }
-    .right { text-align: right; }
+    th {
+      background: #f3f4f6;
+      font-size: 13px;
+    }
+
+    .right {
+      text-align: right;
+    }
 
     .btn-row {
       display: flex;
@@ -81,10 +98,27 @@
       font-size: 14px;
     }
 
-    .add-btn { background: #2563eb; color: white; }
-    .reset-btn { background: #6b7280; color: white; }
-    .delete-btn { background: #dc2626; color: white; padding: 8px 10px; }
-    .log-btn { background: #16a34a; color: white; width: 100%; }
+    .add-btn {
+      background: #2563eb;
+      color: white;
+    }
+
+    .reset-btn {
+      background: #6b7280;
+      color: white;
+    }
+
+    .delete-btn {
+      background: #dc2626;
+      color: white;
+      padding: 8px 10px;
+    }
+
+    .log-btn {
+      background: #16a34a;
+      color: white;
+      width: 100%;
+    }
 
     .section {
       margin-top: 22px;
@@ -107,22 +141,49 @@
       border: 1px solid #e5e7eb;
     }
 
-    .summary-label { color: #666; font-size: 13px; margin-bottom: 5px; }
-    .summary-value { font-size: 18px; font-weight: bold; }
-    .positive { color: #16a34a; font-weight: bold; }
-    .negative { color: #dc2626; font-weight: bold; }
-    .balanced { color: #16a34a; font-weight: bold; }
-    .not-balanced { color: #dc2626; font-weight: bold; }
+    .summary-label {
+      color: #666;
+      font-size: 13px;
+      margin-bottom: 5px;
+    }
 
-    .table-wrap { overflow-x: auto; }
+    .summary-value {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .positive {
+      color: #16a34a;
+      font-weight: bold;
+    }
+
+    .negative {
+      color: #dc2626;
+      font-weight: bold;
+    }
+
+    .balanced {
+      color: #16a34a;
+      font-weight: bold;
+    }
+
+    .not-balanced {
+      color: #dc2626;
+      font-weight: bold;
+    }
 
     @media (max-width: 800px) {
-      .settings, .summary-grid { grid-template-columns: 1fr; }
-      table { font-size: 13px; min-width: 900px; }
-      th, td { padding: 7px; }
+      .settings, .summary-grid {
+        grid-template-columns: 1fr;
+      }
+
+      table {
+        min-width: 900px;
+      }
     }
   </style>
 </head>
+
 <body>
   <div class="container">
     <h1>💰 Poker Weekly Tracker</h1>
@@ -133,10 +194,12 @@
         <label>Game Date</label>
         <input type="date" id="gameDate">
       </div>
+
       <div>
         <label>Buy-in Amount ($)</label>
         <input type="number" id="buyinAmount" value="50" min="1">
       </div>
+
       <div>
         <label>Chips per $1</label>
         <input type="number" id="chipsPerDollar" value="4" min="1">
@@ -147,7 +210,7 @@
       <table>
         <thead>
           <tr>
-            <th style="width:22%;">Player Name</th>
+            <th>Player Name</th>
             <th class="right">Total Buy-ins</th>
             <th class="right">Chips Returned</th>
             <th class="right">Money Put In</th>
@@ -172,14 +235,17 @@
           <div class="summary-label">Total Money Put In</div>
           <div class="summary-value" id="totalIn">$0.00</div>
         </div>
+
         <div class="summary-box">
           <div class="summary-label">Total Cash Returned</div>
           <div class="summary-value" id="totalReturned">$0.00</div>
         </div>
+
         <div class="summary-box">
           <div class="summary-label">Total Difference</div>
           <div class="summary-value" id="difference">$0.00</div>
         </div>
+
         <div class="summary-box">
           <div class="summary-label">Status</div>
           <div class="summary-value" id="balanceStatus">Not Checked</div>
@@ -189,13 +255,16 @@
 
     <div class="section">
       <h2>Buy-in Audit Log</h2>
-      <p style="color:#666; margin-bottom:12px;">When someone buys in, select the player and click Log Buy-in. It records time, player, and running count.</p>
+      <p style="color:#666; margin-bottom:12px;">
+        When someone buys in, select the player and click Log Buy-in.
+      </p>
 
       <div class="settings" style="grid-template-columns: 2fr 1fr;">
         <div>
           <label>Select Player</label>
           <select id="auditPlayer"></select>
         </div>
+
         <div style="display:flex; align-items:end;">
           <button class="log-btn" id="logBuyinBtn" type="button">Log Buy-in</button>
         </div>
@@ -204,7 +273,7 @@
       <table>
         <thead>
           <tr>
-            <th style="width:25%;">Time</th>
+            <th>Time</th>
             <th>Player</th>
             <th class="right">Running Buy-in Count</th>
           </tr>
@@ -215,105 +284,78 @@
   </div>
 
   <script>
-    const DEFAULT_PLAYERS = ['SBB', 'Jay', 'Naveen', 'Kiran', 'Anish', 'Ranjan', 'Bhanu', 'Raj', 'Krishna', 'Mandy', 'Gopi'];
+    const DEFAULT_PLAYERS = [
+      "SBB", "Jay", "Naveen", "Kiran", "Anish",
+      "Ranjan", "Bhanu", "Raj", "Krishna", "Mandy", "Gopi"
+    ];
 
     let auditLog = [];
     let runningBuyinCount = 0;
 
     function money(value) {
-      return '$' + Number(value || 0).toFixed(2);
+      return "$" + Number(value || 0).toFixed(2);
     }
 
     function todayDate() {
       return new Date().toISOString().slice(0, 10);
     }
 
-    function addPlayerRow(name = '', buyins = '1', chips = '') {
-      const tbody = document.getElementById('playerRows');
-      const tr = document.createElement('tr');
+    function addPlayerRow(name = "", buyins = "1", chips = "") {
+      const tbody = document.getElementById("playerRows");
+      const tr = document.createElement("tr");
 
-      const nameTd = document.createElement('td');
-      const nameInput = document.createElement('input');
-      nameInput.type = 'text';
-      nameInput.className = 'player-name';
-      nameInput.placeholder = 'Name';
-      nameInput.value = name;
-      nameInput.addEventListener('input', calculateAll);
-      nameTd.appendChild(nameInput);
+      tr.innerHTML = `
+        <td><input type="text" class="player-name" placeholder="Name" value="${name}"></td>
+        <td><input type="number" class="buyins right" min="0" value="${buyins}"></td>
+        <td><input type="number" class="chips right" min="0" placeholder="0" value="${chips}"></td>
+        <td class="right money-in">$0.00</td>
+        <td class="right cash-returned">$0.00</td>
+        <td class="right net">$0.00</td>
+        <td><button class="delete-btn" type="button">X</button></td>
+      `;
 
-      const buyinTd = document.createElement('td');
-      const buyinInput = document.createElement('input');
-      buyinInput.type = 'number';
-      buyinInput.className = 'buyins right';
-      buyinInput.min = '0';
-      buyinInput.value = buyins;
-      buyinInput.addEventListener('input', calculateAll);
-      buyinTd.appendChild(buyinInput);
+      tbody.appendChild(tr);
 
-      const chipsTd = document.createElement('td');
-      const chipsInput = document.createElement('input');
-      chipsInput.type = 'number';
-      chipsInput.className = 'chips right';
-      chipsInput.min = '0';
-      chipsInput.placeholder = '0';
-      chipsInput.value = chips;
-      chipsInput.addEventListener('input', calculateAll);
-      chipsTd.appendChild(chipsInput);
+      tr.querySelector(".player-name").addEventListener("input", calculateAll);
+      tr.querySelector(".buyins").addEventListener("input", calculateAll);
+      tr.querySelector(".chips").addEventListener("input", calculateAll);
 
-      const moneyInTd = document.createElement('td');
-      moneyInTd.className = 'right money-in';
-      moneyInTd.textContent = '$0.00';
-
-      const cashReturnedTd = document.createElement('td');
-      cashReturnedTd.className = 'right cash-returned';
-      cashReturnedTd.textContent = '$0.00';
-
-      const netTd = document.createElement('td');
-      netTd.className = 'right net';
-      netTd.textContent = '$0.00';
-
-      const deleteTd = document.createElement('td');
-      const deleteBtn = document.createElement('button');
-      deleteBtn.type = 'button';
-      deleteBtn.className = 'delete-btn';
-      deleteBtn.textContent = 'X';
-      deleteBtn.addEventListener('click', function () {
+      tr.querySelector(".delete-btn").addEventListener("click", function () {
         tr.remove();
         calculateAll();
       });
-      deleteTd.appendChild(deleteBtn);
 
-      tr.appendChild(nameTd);
-      tr.appendChild(buyinTd);
-      tr.appendChild(chipsTd);
-      tr.appendChild(moneyInTd);
-      tr.appendChild(cashReturnedTd);
-      tr.appendChild(netTd);
-      tr.appendChild(deleteTd);
+      calculateAll();
+    }
 
-      tbody.appendChild(tr);
+    function loadDefaultPlayers() {
+      document.getElementById("playerRows").innerHTML = "";
+      DEFAULT_PLAYERS.forEach(name => {
+        addPlayerRow(name, "1", "");
+      });
       calculateAll();
     }
 
     function getRowsData() {
-      const buyinAmount = Number(document.getElementById('buyinAmount').value || 0);
-      const chipsPerDollar = Number(document.getElementById('chipsPerDollar').value || 1);
+      const buyinAmount = Number(document.getElementById("buyinAmount").value || 0);
+      const chipsPerDollar = Number(document.getElementById("chipsPerDollar").value || 1);
       const rows = [];
 
-      document.querySelectorAll('#playerRows tr').forEach(tr => {
-        const name = tr.querySelector('.player-name').value.trim();
-        const buyins = Number(tr.querySelector('.buyins').value || 0);
-        const chipsReturned = Number(tr.querySelector('.chips').value || 0);
+      document.querySelectorAll("#playerRows tr").forEach(tr => {
+        const name = tr.querySelector(".player-name").value.trim();
+        const buyins = Number(tr.querySelector(".buyins").value || 0);
+        const chipsReturned = Number(tr.querySelector(".chips").value || 0);
+
         const moneyIn = buyins * buyinAmount;
         const cashReturned = chipsReturned / chipsPerDollar;
         const net = cashReturned - moneyIn;
 
-        tr.querySelector('.money-in').textContent = money(moneyIn);
-        tr.querySelector('.cash-returned').textContent = money(cashReturned);
+        tr.querySelector(".money-in").textContent = money(moneyIn);
+        tr.querySelector(".cash-returned").textContent = money(cashReturned);
 
-        const netCell = tr.querySelector('.net');
-        netCell.textContent = (net >= 0 ? '+' : '') + money(net);
-        netCell.className = 'right net ' + (net >= 0 ? 'positive' : 'negative');
+        const netCell = tr.querySelector(".net");
+        netCell.textContent = (net >= 0 ? "+" : "") + money(net);
+        netCell.className = "right net " + (net >= 0 ? "positive" : "negative");
 
         if (name) {
           rows.push({ name, buyins, chipsReturned, moneyIn, cashReturned, net });
@@ -325,42 +367,47 @@
 
     function calculateAll() {
       const rows = getRowsData();
+
       const totalIn = rows.reduce((sum, r) => sum + r.moneyIn, 0);
       const totalReturned = rows.reduce((sum, r) => sum + r.cashReturned, 0);
       const diff = totalReturned - totalIn;
 
-      document.getElementById('totalIn').textContent = money(totalIn);
-      document.getElementById('totalReturned').textContent = money(totalReturned);
-      document.getElementById('difference').textContent = (diff >= 0 ? '+' : '') + money(diff);
+      document.getElementById("totalIn").textContent = money(totalIn);
+      document.getElementById("totalReturned").textContent = money(totalReturned);
+      document.getElementById("difference").textContent = (diff >= 0 ? "+" : "") + money(diff);
 
-      const status = document.getElementById('balanceStatus');
+      const status = document.getElementById("balanceStatus");
+
       if (Math.abs(diff) < 0.01) {
-        status.textContent = '✅ Balanced (0)';
-        status.className = 'summary-value balanced';
+        status.textContent = "✅ Balanced (0)";
+        status.className = "summary-value balanced";
       } else if (diff > 0) {
-        status.textContent = '⚠️ Total is Plus';
-        status.className = 'summary-value not-balanced';
+        status.textContent = "⚠️ Total is Plus";
+        status.className = "summary-value not-balanced";
       } else {
-        status.textContent = '⚠️ Total is Minus';
-        status.className = 'summary-value not-balanced';
+        status.textContent = "⚠️ Total is Minus";
+        status.className = "summary-value not-balanced";
       }
 
       refreshAuditPlayerDropdown();
     }
 
     function refreshAuditPlayerDropdown() {
-      const dropdown = document.getElementById('auditPlayer');
+      const dropdown = document.getElementById("auditPlayer");
       const currentValue = dropdown.value;
       const names = [];
 
-      document.querySelectorAll('.player-name').forEach(input => {
+      document.querySelectorAll(".player-name").forEach(input => {
         const name = input.value.trim();
-        if (name && !names.includes(name)) names.push(name);
+        if (name && !names.includes(name)) {
+          names.push(name);
+        }
       });
 
-      dropdown.innerHTML = '';
+      dropdown.innerHTML = "";
+
       names.forEach(name => {
-        const option = document.createElement('option');
+        const option = document.createElement("option");
         option.value = name;
         option.textContent = name;
         dropdown.appendChild(option);
@@ -372,40 +419,46 @@
     }
 
     function formatTime(date) {
-      return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+      return date.toLocaleTimeString([], {
+        hour: "numeric",
+        minute: "2-digit"
+      });
     }
 
     function logBuyin() {
-      const player = document.getElementById('auditPlayer').value;
+      const player = document.getElementById("auditPlayer").value;
+
       if (!player) {
-        alert('Enter a player name first.');
+        alert("Enter a player name first.");
         return;
       }
 
-      runningBuyinCount += 1;
-      auditLog.push({ time: formatTime(new Date()), player, count: runningBuyinCount });
+      runningBuyinCount++;
+
+      auditLog.push({
+        time: formatTime(new Date()),
+        player: player,
+        count: runningBuyinCount
+      });
+
       renderAuditLog();
     }
 
     function renderAuditLog() {
-      const tbody = document.getElementById('auditRows');
-      tbody.innerHTML = '';
+      const tbody = document.getElementById("auditRows");
+      tbody.innerHTML = "";
 
       auditLog.forEach(item => {
-        const tr = document.createElement('tr');
+        const tr = document.createElement("tr");
+
         tr.innerHTML = `
           <td>${item.time}</td>
           <td>${item.player}</td>
           <td class="right">${item.count}</td>
         `;
+
         tbody.appendChild(tr);
       });
-    }
-
-    function loadDefaultPlayers() {
-      document.getElementById('playerRows').innerHTML = '';
-      DEFAULT_PLAYERS.forEach(name => addPlayerRow(name, '1', ''));
-      calculateAll();
     }
 
     function resetAll() {
@@ -416,18 +469,22 @@
     }
 
     function initApp() {
-      document.getElementById('gameDate').value = todayDate();
-      document.getElementById('buyinAmount').addEventListener('input', calculateAll);
-      document.getElementById('chipsPerDollar').addEventListener('input', calculateAll);
-      document.getElementById('addPlayerBtn').addEventListener('click', function () {
-        addPlayerRow('', '1', '');
+      document.getElementById("gameDate").value = todayDate();
+
+      document.getElementById("buyinAmount").addEventListener("input", calculateAll);
+      document.getElementById("chipsPerDollar").addEventListener("input", calculateAll);
+
+      document.getElementById("addPlayerBtn").addEventListener("click", function () {
+        addPlayerRow("", "1", "");
       });
-      document.getElementById('resetBtn').addEventListener('click', resetAll);
-      document.getElementById('logBuyinBtn').addEventListener('click', logBuyin);
+
+      document.getElementById("resetBtn").addEventListener("click", resetAll);
+      document.getElementById("logBuyinBtn").addEventListener("click", logBuyin);
+
       loadDefaultPlayers();
     }
 
-    window.addEventListener('DOMContentLoaded', initApp);
+    window.addEventListener("DOMContentLoaded", initApp);
   </script>
 </body>
 </html>
