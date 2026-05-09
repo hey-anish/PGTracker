@@ -3,366 +3,396 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Weekly Poker Settlement Tracker</title>
+  <title>Poker Weekly Tracker</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: Arial, sans-serif; background: #f5f7fb; color: #1f2937; padding: 16px; }
-    .container { max-width: 1100px; margin: auto; }
-    .header { background: #111827; color: white; padding: 18px; border-radius: 14px; margin-bottom: 16px; }
-    .header h1 { font-size: 24px; margin-bottom: 6px; }
-    .header p { color: #d1d5db; font-size: 14px; }
-    .card { background: white; border-radius: 14px; padding: 16px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,.08); }
-    .row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 12px; }
-    label { display: block; font-size: 13px; font-weight: bold; margin-bottom: 5px; color: #374151; }
-    input, button { width: 100%; padding: 10px; border-radius: 9px; border: 1px solid #d1d5db; font-size: 14px; }
-    button { border: none; cursor: pointer; font-weight: bold; }
-    .primary { background: #2563eb; color: white; }
-    .success { background: #16a34a; color: white; }
-    .danger { background: #dc2626; color: white; }
-    .secondary { background: #6b7280; color: white; }
-    .table-wrap { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; min-width: 850px; }
-    th, td { padding: 10px; border-bottom: 1px solid #e5e7eb; text-align: left; font-size: 14px; }
-    th { background: #f3f4f6; }
-    .right { text-align: right; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      margin: 0;
+      padding: 16px;
+      color: #222;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    }
+
+    h1 {
+      margin-bottom: 6px;
+      font-size: 26px;
+    }
+
+    .subtitle {
+      color: #666;
+      margin-bottom: 20px;
+    }
+
+    .settings {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      font-size: 13px;
+      margin-bottom: 5px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 15px;
+      box-sizing: border-box;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+    }
+
+    th, td {
+      border-bottom: 1px solid #e5e7eb;
+      padding: 10px;
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    th {
+      background: #f3f4f6;
+      font-size: 13px;
+    }
+
+    .right {
+      text-align: right;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: none;
+      border-radius: 8px;
+      padding: 11px 16px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .add-btn {
+      background: #2563eb;
+      color: white;
+    }
+
+    .reset-btn {
+      background: #6b7280;
+      color: white;
+    }
+
+    .delete-btn {
+      background: #dc2626;
+      color: white;
+      padding: 8px 10px;
+    }
+
+    .summary {
+      margin-top: 22px;
+      padding: 16px;
+      border-radius: 10px;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .summary-box {
+      background: white;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+    }
+
+    .summary-label {
+      color: #666;
+      font-size: 13px;
+      margin-bottom: 5px;
+    }
+
+    .summary-value {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
     .positive { color: #16a34a; font-weight: bold; }
     .negative { color: #dc2626; font-weight: bold; }
-    .pill { display: inline-block; padding: 4px 8px; border-radius: 999px; background: #e5e7eb; font-size: 12px; font-weight: bold; }
-    .settlement { padding: 12px; border-radius: 10px; background: #fff7ed; border-left: 5px solid #f97316; margin-bottom: 8px; display: flex; justify-content: space-between; gap: 10px; }
-    .message { padding: 10px; border-radius: 10px; margin-top: 10px; display: none; }
-    .message.ok { background: #dcfce7; color: #166534; display: block; }
-    .message.error { background: #fee2e2; color: #991b1b; display: block; }
-    @media (max-width: 800px) { .row { grid-template-columns: 1fr; } body { padding: 8px; } }
+    .balanced { color: #16a34a; font-weight: bold; }
+    .not-balanced { color: #dc2626; font-weight: bold; }
+
+    .settlement {
+      margin-top: 20px;
+      padding: 16px;
+      border-radius: 10px;
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+    }
+
+    .settlement-line {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #fed7aa;
+    }
+
+    .settlement-line:last-child {
+      border-bottom: none;
+    }
+
+    @media (max-width: 800px) {
+      .settings, .summary-grid {
+        grid-template-columns: 1fr;
+      }
+
+      table {
+        font-size: 13px;
+      }
+
+      th, td {
+        padding: 7px;
+      }
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="header">
-      <h1>💰 Weekly Poker Settlement Tracker</h1>
-      <p>Enter weekly game results, save to Google Sheets, and calculate monthly settle-up.</p>
-    </div>
+    <h1>💰 Poker Weekly Tracker</h1>
+    <div class="subtitle">Step 1: Enter one week’s game data and make sure the totals balance to zero.</div>
 
-    <div class="card">
-      <div class="row">
-        <div>
-          <label>Game Date</label>
-          <input id="gameDate" type="date" />
-        </div>
-        <div>
-          <label>Month</label>
-          <input id="monthKey" type="month" />
-        </div>
-        <div>
-          <label>Buy-in Amount ($)</label>
-          <input id="buyinAmount" type="number" value="50" min="1" oninput="recalculateOnly()" />
-        </div>
-        <div>
-          <label>Chips per $1</label>
-          <input id="chipsPerDollar" type="number" value="4" min="1" oninput="recalculateOnly()" />
-        </div>
+    <div class="settings">
+      <div>
+        <label>Game Date</label>
+        <input type="date" id="gameDate">
       </div>
-      <div class="row">
-        <button class="primary" type="button" onclick="addPlayer()">+ Add Player</button>
-        <button class="secondary" type="button" onclick="loadMonth()">Load Month</button>
-        <button class="success" type="button" onclick="saveWeek()">Save This Week</button>
-        <button class="danger" type="button" onclick="resetCurrentWeek()">Reset Week</button>
+      <div>
+        <label>Buy-in Amount ($)</label>
+        <input type="number" id="buyinAmount" value="50" min="1">
       </div>
-      <div id="message" class="message"></div>
-    </div>
-
-    <div class="card">
-      <h2 style="margin-bottom:12px;">This Week Entry</h2>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Player</th>
-              <th class="right">Total Buy-ins</th>
-              <th class="right">Extra Buy-ins</th>
-              <th class="right">Chips Returned</th>
-              <th class="right">Spent</th>
-              <th class="right">Cash Out</th>
-              <th class="right">Net</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody id="playersBody"></tbody>
-        </table>
+      <div>
+        <label>Chips per $1</label>
+        <input type="number" id="chipsPerDollar" value="4" min="1">
       </div>
     </div>
 
-    <div class="card">
-      <h2 style="margin-bottom:12px;">Current Week Settlement</h2>
-      <div id="weeklySettlement"></div>
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 25%;">Player Name</th>
+          <th class="right">Total Buy-ins</th>
+          <th class="right">Chips Returned</th>
+          <th class="right">Money Put In</th>
+          <th class="right">Cash Value Returned</th>
+          <th class="right">Net Win / Loss</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="playerRows"></tbody>
+    </table>
+
+    <div class="btn-row">
+      <button class="add-btn" onclick="addPlayerRow()">+ Add Player</button>
+      <button class="reset-btn" onclick="resetAll()">Reset</button>
     </div>
 
-    <div class="card">
-      <h2 style="margin-bottom:12px;">Monthly Summary</h2>
-      <p style="margin-bottom:10px; color:#6b7280;">This uses all saved weeks for the selected month.</p>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Player</th>
-              <th class="right">Total Spent</th>
-              <th class="right">Total Cash Out</th>
-              <th class="right">Monthly Net</th>
-            </tr>
-          </thead>
-          <tbody id="monthlyBody"></tbody>
-        </table>
+    <div class="summary">
+      <h2>Balance Check</h2>
+      <div class="summary-grid">
+        <div class="summary-box">
+          <div class="summary-label">Total Money Put In</div>
+          <div class="summary-value" id="totalIn">$0.00</div>
+        </div>
+        <div class="summary-box">
+          <div class="summary-label">Total Cash Returned</div>
+          <div class="summary-value" id="totalReturned">$0.00</div>
+        </div>
+        <div class="summary-box">
+          <div class="summary-label">Difference</div>
+          <div class="summary-value" id="difference">$0.00</div>
+        </div>
+        <div class="summary-box">
+          <div class="summary-label">Status</div>
+          <div class="summary-value" id="balanceStatus">Not Checked</div>
+        </div>
       </div>
     </div>
 
-    <div class="card">
-      <h2 style="margin-bottom:12px;">Monthly Settle Up</h2>
-      <div id="monthlySettlement"></div>
+    <div class="settlement">
+      <h2>Who Pays Whom</h2>
+      <div id="settlementList">Enter player data to calculate settlement.</div>
     </div>
   </div>
 
   <script>
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxgkg8YtIp-z_fvbmiA2fy3rQb6PrgoMLnUeAsZyhMJrEMAn9E_N7DVq_-fkKooqNX-/exec";
-
-    let players = [
-      { name: "", totalBuyins: "1", chipsReturned: "" },
-      { name: "", totalBuyins: "1", chipsReturned: "" },
-      { name: "", totalBuyins: "1", chipsReturned: "" },
-      { name: "", totalBuyins: "1", chipsReturned: "" }
-    ];
-
-    const money = value => "$" + Number(value || 0).toFixed(2);
-
-    function initDates() {
-      const today = new Date();
-      document.getElementById("gameDate").value = today.toISOString().slice(0,10);
-      document.getElementById("monthKey").value = today.toISOString().slice(0,7);
+    function money(value) {
+      return '$' + Number(value || 0).toFixed(2);
     }
 
-    function getSettings() {
-      return {
-        gameDate: document.getElementById("gameDate").value,
-        monthKey: document.getElementById("monthKey").value,
-        buyinAmount: Number(document.getElementById("buyinAmount").value || 50),
-        chipsPerDollar: Number(document.getElementById("chipsPerDollar").value || 4)
-      };
+    function todayDate() {
+      return new Date().toISOString().slice(0, 10);
     }
 
-    function calculateRows(sourcePlayers = players) {
-      const { buyinAmount, chipsPerDollar } = getSettings();
-      return sourcePlayers
-        .filter(p => String(p.name || "").trim())
-        .map(p => {
-          const totalBuyins = Number(p.totalBuyins || 0);
-          const chipsReturned = Number(p.chipsReturned || 0);
-          const spent = totalBuyins * buyinAmount;
-          const cashOut = chipsReturned / chipsPerDollar;
-          const net = cashOut - spent;
-          return {
-            player: String(p.name || "").trim(),
-            totalBuyins,
-            extraBuyins: Math.max(0, totalBuyins - 1),
-            chipsReturned,
-            spent,
-            cashOut,
-            net
-          };
-        });
+    function addPlayerRow(name = '', buyins = '1', chips = '') {
+      const tbody = document.getElementById('playerRows');
+      const tr = document.createElement('tr');
+
+      tr.innerHTML = `
+        <td><input type="text" class="player-name" placeholder="Name" value="${name}"></td>
+        <td><input type="number" class="buyins right" min="0" value="${buyins}"></td>
+        <td><input type="number" class="chips right" min="0" placeholder="0" value="${chips}"></td>
+        <td class="right money-in">$0.00</td>
+        <td class="right cash-returned">$0.00</td>
+        <td class="right net">$0.00</td>
+        <td><button class="delete-btn" onclick="deleteRow(this)">X</button></td>
+      `;
+
+      tbody.appendChild(tr);
+
+      tr.querySelectorAll('input').forEach(input => {
+        input.addEventListener('input', calculateAll);
+      });
+
+      calculateAll();
     }
 
-    function calculateSettlements(summaryRows) {
-      const winners = summaryRows.filter(r => r.net > 0.009).map(r => ({ name: r.player, balance: r.net })).sort((a,b) => b.balance - a.balance);
-      const losers = summaryRows.filter(r => r.net < -0.009).map(r => ({ name: r.player, balance: r.net })).sort((a,b) => a.balance - b.balance);
+    function deleteRow(button) {
+      button.closest('tr').remove();
+      calculateAll();
+    }
+
+    function getRowsData() {
+      const buyinAmount = Number(document.getElementById('buyinAmount').value || 0);
+      const chipsPerDollar = Number(document.getElementById('chipsPerDollar').value || 1);
+      const rows = [];
+
+      document.querySelectorAll('#playerRows tr').forEach(tr => {
+        const name = tr.querySelector('.player-name').value.trim();
+        const buyins = Number(tr.querySelector('.buyins').value || 0);
+        const chipsReturned = Number(tr.querySelector('.chips').value || 0);
+        const moneyIn = buyins * buyinAmount;
+        const cashReturned = chipsReturned / chipsPerDollar;
+        const net = cashReturned - moneyIn;
+
+        tr.querySelector('.money-in').textContent = money(moneyIn);
+        tr.querySelector('.cash-returned').textContent = money(cashReturned);
+        const netCell = tr.querySelector('.net');
+        netCell.textContent = (net >= 0 ? '+' : '') + money(net);
+        netCell.className = 'right net ' + (net >= 0 ? 'positive' : 'negative');
+
+        if (name) {
+          rows.push({ name, buyins, chipsReturned, moneyIn, cashReturned, net });
+        }
+      });
+
+      return rows;
+    }
+
+    function calculateSettlements(rows) {
+      const winners = rows
+        .filter(r => r.net > 0.009)
+        .map(r => ({ name: r.name, amount: r.net }))
+        .sort((a, b) => b.amount - a.amount);
+
+      const losers = rows
+        .filter(r => r.net < -0.009)
+        .map(r => ({ name: r.name, amount: Math.abs(r.net) }))
+        .sort((a, b) => b.amount - a.amount);
+
       const settlements = [];
-      let wi = 0, li = 0;
-      while (wi < winners.length && li < losers.length) {
-        const amount = Math.min(winners[wi].balance, Math.abs(losers[li].balance));
-        if (amount > 0.009) settlements.push({ from: losers[li].name, to: winners[wi].name, amount });
-        winners[wi].balance -= amount;
-        losers[li].balance += amount;
-        if (Math.abs(winners[wi].balance) < 0.01) wi++;
-        if (Math.abs(losers[li].balance) < 0.01) li++;
+      let i = 0;
+      let j = 0;
+
+      while (i < losers.length && j < winners.length) {
+        const payAmount = Math.min(losers[i].amount, winners[j].amount);
+        if (payAmount > 0.009) {
+          settlements.push({ from: losers[i].name, to: winners[j].name, amount: payAmount });
+        }
+        losers[i].amount -= payAmount;
+        winners[j].amount -= payAmount;
+
+        if (losers[i].amount < 0.01) i++;
+        if (winners[j].amount < 0.01) j++;
       }
+
       return settlements;
     }
 
-    function renderPlayersOnce() {
-      const tbody = document.getElementById("playersBody");
-      tbody.innerHTML = "";
+    function calculateAll() {
+      const rows = getRowsData();
+      const totalIn = rows.reduce((sum, r) => sum + r.moneyIn, 0);
+      const totalReturned = rows.reduce((sum, r) => sum + r.cashReturned, 0);
+      const diff = totalReturned - totalIn;
 
-      players.forEach((p, index) => {
-        const tr = document.createElement("tr");
-        tr.id = `playerRow${index}`;
-        tr.innerHTML = `
-          <td><input id="name${index}" value="${p.name}" placeholder="Player name" oninput="updatePlayerValue(${index}, 'name', this.value)" /></td>
-          <td><input id="buyins${index}" class="right" type="number" min="1" value="${p.totalBuyins}" oninput="updatePlayerValue(${index}, 'totalBuyins', this.value)" /></td>
-          <td class="right"><span class="pill" id="extra${index}">0</span></td>
-          <td><input id="chips${index}" class="right" type="number" min="0" value="${p.chipsReturned}" placeholder="0" oninput="updatePlayerValue(${index}, 'chipsReturned', this.value)" /></td>
-          <td class="right" id="spent${index}">$0.00</td>
-          <td class="right" id="cashout${index}">$0.00</td>
-          <td class="right" id="net${index}">$0.00</td>
-          <td><button class="danger" type="button" onclick="removePlayer(${index})">X</button></td>
-        `;
-        tbody.appendChild(tr);
-      });
+      document.getElementById('totalIn').textContent = money(totalIn);
+      document.getElementById('totalReturned').textContent = money(totalReturned);
+      document.getElementById('difference').textContent = (diff >= 0 ? '+' : '') + money(diff);
 
-      recalculateOnly();
-    }
-
-    function updatePlayerValue(index, field, value) {
-      players[index][field] = value;
-      updateCalculatedCells(index);
-      renderWeeklySettlement();
-    }
-
-    function updateCalculatedCells(index) {
-      const p = players[index];
-      const { buyinAmount, chipsPerDollar } = getSettings();
-      const totalBuyins = Number(p.totalBuyins || 0);
-      const chipsReturned = Number(p.chipsReturned || 0);
-      const spent = totalBuyins * buyinAmount;
-      const cashOut = chipsReturned / chipsPerDollar;
-      const net = cashOut - spent;
-
-      document.getElementById(`extra${index}`).textContent = Math.max(0, totalBuyins - 1);
-      document.getElementById(`spent${index}`).textContent = money(spent);
-      document.getElementById(`cashout${index}`).textContent = money(cashOut);
-      const netCell = document.getElementById(`net${index}`);
-      netCell.textContent = `${net >= 0 ? "+" : ""}${money(net)}`;
-      netCell.className = `right ${net >= 0 ? "positive" : "negative"}`;
-    }
-
-    function recalculateOnly() {
-      players.forEach((_, index) => updateCalculatedCells(index));
-      renderWeeklySettlement();
-    }
-
-    function renderSettlement(elementId, settlements) {
-      const div = document.getElementById(elementId);
-      if (!settlements.length) {
-        div.innerHTML = `<p style="color:#16a34a;font-weight:bold;">No payments needed. Everyone is even.</p>`;
-        return;
-      }
-      div.innerHTML = settlements.map(s => `
-        <div class="settlement">
-          <div><strong>${s.from}</strong> pays <strong>${s.to}</strong></div>
-          <div><strong>${money(s.amount)}</strong></div>
-        </div>
-      `).join("");
-    }
-
-    function renderWeeklySettlement() {
-      const rows = calculateRows();
-      renderSettlement("weeklySettlement", calculateSettlements(rows));
-    }
-
-    function renderMonthlySummary(rows = []) {
-      const tbody = document.getElementById("monthlyBody");
-      tbody.innerHTML = "";
-      rows.forEach(r => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${r.player}</td>
-          <td class="right">${money(r.spent)}</td>
-          <td class="right">${money(r.cashOut)}</td>
-          <td class="right ${r.net >= 0 ? "positive" : "negative"}">${r.net >= 0 ? "+" : ""}${money(r.net)}</td>
-        `;
-        tbody.appendChild(tr);
-      });
-      renderSettlement("monthlySettlement", calculateSettlements(rows));
-    }
-
-    function addPlayer() {
-      players.push({ name: "", totalBuyins: "1", chipsReturned: "" });
-      renderPlayersOnce();
-    }
-
-    function removePlayer(index) {
-      players.splice(index, 1);
-      renderPlayersOnce();
-    }
-
-    function resetCurrentWeek() {
-      players = players.map(p => ({ name: p.name, totalBuyins: "1", chipsReturned: "" }));
-      renderPlayersOnce();
-    }
-
-    function showMessage(text, type) {
-      const msg = document.getElementById("message");
-      msg.textContent = text;
-      msg.className = "message " + type;
-      setTimeout(() => { msg.className = "message"; }, 5000);
-    }
-
-    async function saveWeek() {
-      const settings = getSettings();
-      const rows = calculateRows();
-
-      if (!settings.gameDate || !settings.monthKey) {
-        showMessage("Please select game date and month.", "error");
-        return;
-      }
-      if (!rows.length) {
-        showMessage("Please enter at least one player name.", "error");
-        return;
-      }
-      if (GOOGLE_SCRIPT_URL.includes("PASTE_")) {
-        showMessage("Add your Google Apps Script URL inside index.html first.", "error");
-        return;
+      const status = document.getElementById('balanceStatus');
+      if (Math.abs(diff) < 0.01) {
+        status.textContent = '✅ Balanced';
+        status.className = 'summary-value balanced';
+      } else {
+        status.textContent = '⚠️ Not Balanced';
+        status.className = 'summary-value not-balanced';
       }
 
-      try {
-        const payload = {
-          action: "saveWeek",
-          gameDate: settings.gameDate,
-          monthKey: settings.monthKey,
-          buyinAmount: settings.buyinAmount,
-          chipsPerDollar: settings.chipsPerDollar,
-          rows
-        };
+      const settlements = calculateSettlements(rows);
+      const list = document.getElementById('settlementList');
 
-        const response = await fetch(GOOGLE_SCRIPT_URL, {
-          method: "POST",
-          body: JSON.stringify(payload)
-        });
-
-        const result = await response.json();
-        if (result.ok) {
-          showMessage("Week saved to Google Sheets.", "ok");
-          loadMonth();
-        } else {
-          showMessage(result.error || "Save failed.", "error");
-        }
-      } catch (err) {
-        showMessage("Save failed: " + err.message, "error");
+      if (rows.length === 0) {
+        list.innerHTML = 'Enter player data to calculate settlement.';
+      } else if (settlements.length === 0 && Math.abs(diff) < 0.01) {
+        list.innerHTML = '<div class="balanced">Everyone is even. No settlement needed.</div>';
+      } else if (Math.abs(diff) >= 0.01) {
+        list.innerHTML = '<div class="not-balanced">Game is not balanced yet. Fix chips returned before settling.</div>';
+      } else {
+        list.innerHTML = settlements.map(s => `
+          <div class="settlement-line">
+            <div><strong>${s.from}</strong> pays <strong>${s.to}</strong></div>
+            <div><strong>${money(s.amount)}</strong></div>
+          </div>
+        `).join('');
       }
     }
 
-    async function loadMonth() {
-      const { monthKey } = getSettings();
-      if (GOOGLE_SCRIPT_URL.includes("PASTE_")) {
-        showMessage("Add your Google Apps Script URL inside index.html first.", "error");
-        return;
-      }
-
-      try {
-        const url = `${GOOGLE_SCRIPT_URL}?action=getMonth&monthKey=${encodeURIComponent(monthKey)}`;
-        const response = await fetch(url);
-        const result = await response.json();
-        if (!result.ok) {
-          showMessage(result.error || "Month load failed.", "error");
-          return;
-        }
-        renderMonthlySummary(result.summary || []);
-        showMessage("Monthly data loaded.", "ok");
-      } catch (err) {
-        showMessage("Load failed: " + err.message, "error");
-      }
+    function resetAll() {
+      document.getElementById('playerRows').innerHTML = '';
+      addPlayerRow();
+      addPlayerRow();
+      addPlayerRow();
+      addPlayerRow();
     }
 
-    initDates();
-    renderPlayersOnce();
+    document.getElementById('gameDate').value = todayDate();
+    document.getElementById('buyinAmount').addEventListener('input', calculateAll);
+    document.getElementById('chipsPerDollar').addEventListener('input', calculateAll);
+
+    resetAll();
   </script>
-
-
 </body>
 </html>
