@@ -14,7 +14,7 @@
     }
 
     .container {
-      max-width: 1000px;
+      max-width: 1050px;
       margin: 0 auto;
       background: white;
       padding: 20px;
@@ -22,15 +22,9 @@
       box-shadow: 0 2px 10px rgba(0,0,0,0.08);
     }
 
-    h1 {
-      margin-bottom: 6px;
-      font-size: 26px;
-    }
-
-    .subtitle {
-      color: #666;
-      margin-bottom: 20px;
-    }
+    h1 { margin-bottom: 6px; font-size: 26px; }
+    h2 { margin: 0 0 12px; font-size: 20px; }
+    .subtitle { color: #666; margin-bottom: 20px; }
 
     .settings {
       display: grid;
@@ -46,7 +40,7 @@
       margin-bottom: 5px;
     }
 
-    input {
+    input, select {
       width: 100%;
       padding: 10px;
       border: 1px solid #ccc;
@@ -68,14 +62,8 @@
       vertical-align: middle;
     }
 
-    th {
-      background: #f3f4f6;
-      font-size: 13px;
-    }
-
-    .right {
-      text-align: right;
-    }
+    th { background: #f3f4f6; font-size: 13px; }
+    .right { text-align: right; }
 
     .btn-row {
       display: flex;
@@ -93,23 +81,12 @@
       font-size: 14px;
     }
 
-    .add-btn {
-      background: #2563eb;
-      color: white;
-    }
+    .add-btn { background: #2563eb; color: white; }
+    .reset-btn { background: #6b7280; color: white; }
+    .delete-btn { background: #dc2626; color: white; padding: 8px 10px; }
+    .log-btn { background: #16a34a; color: white; width: 100%; }
 
-    .reset-btn {
-      background: #6b7280;
-      color: white;
-    }
-
-    .delete-btn {
-      background: #dc2626;
-      color: white;
-      padding: 8px 10px;
-    }
-
-    .summary {
+    .section {
       margin-top: 22px;
       padding: 16px;
       border-radius: 10px;
@@ -130,60 +107,24 @@
       border: 1px solid #e5e7eb;
     }
 
-    .summary-label {
-      color: #666;
-      font-size: 13px;
-      margin-bottom: 5px;
-    }
-
-    .summary-value {
-      font-size: 18px;
-      font-weight: bold;
-    }
-
+    .summary-label { color: #666; font-size: 13px; margin-bottom: 5px; }
+    .summary-value { font-size: 18px; font-weight: bold; }
     .positive { color: #16a34a; font-weight: bold; }
     .negative { color: #dc2626; font-weight: bold; }
     .balanced { color: #16a34a; font-weight: bold; }
     .not-balanced { color: #dc2626; font-weight: bold; }
 
-    .settlement {
-      margin-top: 20px;
-      padding: 16px;
-      border-radius: 10px;
-      background: #fff7ed;
-      border: 1px solid #fed7aa;
-    }
-
-    .settlement-line {
-      display: flex;
-      justify-content: space-between;
-      padding: 10px 0;
-      border-bottom: 1px solid #fed7aa;
-    }
-
-    .settlement-line:last-child {
-      border-bottom: none;
-    }
-
     @media (max-width: 800px) {
-      .settings, .summary-grid {
-        grid-template-columns: 1fr;
-      }
-
-      table {
-        font-size: 13px;
-      }
-
-      th, td {
-        padding: 7px;
-      }
+      .settings, .summary-grid { grid-template-columns: 1fr; }
+      table { font-size: 13px; }
+      th, td { padding: 7px; }
     }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>💰 Poker Weekly Tracker</h1>
-    <div class="subtitle">Step 1: Enter one week’s game data and make sure the totals balance to zero.</div>
+    <div class="subtitle">Step 1: Enter weekly game data, confirm total is zero, and keep a buy-in audit log.</div>
 
     <div class="settings">
       <div>
@@ -203,7 +144,7 @@
     <table>
       <thead>
         <tr>
-          <th style="width: 25%;">Player Name</th>
+          <th style="width:25%;">Player Name</th>
           <th class="right">Total Buy-ins</th>
           <th class="right">Chips Returned</th>
           <th class="right">Money Put In</th>
@@ -217,10 +158,10 @@
 
     <div class="btn-row">
       <button class="add-btn" onclick="addPlayerRow()">+ Add Player</button>
-      <button class="reset-btn" onclick="resetAll()">Reset</button>
+      <button class="reset-btn" onclick="resetAll()">Reset Players</button>
     </div>
 
-    <div class="summary">
+    <div class="section">
       <h2>Balance Check</h2>
       <div class="summary-grid">
         <div class="summary-box">
@@ -232,7 +173,7 @@
           <div class="summary-value" id="totalReturned">$0.00</div>
         </div>
         <div class="summary-box">
-          <div class="summary-label">Difference</div>
+          <div class="summary-label">Total Difference</div>
           <div class="summary-value" id="difference">$0.00</div>
         </div>
         <div class="summary-box">
@@ -242,23 +183,37 @@
       </div>
     </div>
 
-    <div class="summary" style="margin-top:20px;">
-      <h2>Final Check</h2>
-      <div class="summary-grid">
-        <div class="summary-box">
-          <div class="summary-label">Net Result</div>
-          <div class="summary-value" id="netResult">$0.00</div>
+    <div class="section">
+      <h2>Buy-in Audit Log</h2>
+      <p style="color:#666; margin-bottom:12px;">When someone buys in, select the player and click Log Buy-in. It records time, player, and running count.</p>
+
+      <div class="settings" style="grid-template-columns: 2fr 1fr;">
+        <div>
+          <label>Select Player</label>
+          <select id="auditPlayer"></select>
         </div>
-        <div class="summary-box">
-          <div class="summary-label">Status</div>
-          <div class="summary-value" id="finalStatus">Not Checked</div>
+        <div style="display:flex; align-items:end;">
+          <button class="log-btn" onclick="logBuyin()">Log Buy-in</button>
         </div>
       </div>
-    </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th style="width:25%;">Time</th>
+            <th>Player</th>
+            <th class="right">Running Buy-in Count</th>
+          </tr>
+        </thead>
+        <tbody id="auditRows"></tbody>
+      </table>
     </div>
   </div>
 
   <script>
+    let auditLog = [];
+    let runningBuyinCount = 0;
+
     function money(value) {
       return '$' + Number(value || 0).toFixed(2);
     }
@@ -310,6 +265,7 @@
 
         tr.querySelector('.money-in').textContent = money(moneyIn);
         tr.querySelector('.cash-returned').textContent = money(cashReturned);
+
         const netCell = tr.querySelector('.net');
         netCell.textContent = (net >= 0 ? '+' : '') + money(net);
         netCell.className = 'right net ' + (net >= 0 ? 'positive' : 'negative');
@@ -320,36 +276,6 @@
       });
 
       return rows;
-    }
-
-    function calculateSettlements(rows) {
-      const winners = rows
-        .filter(r => r.net > 0.009)
-        .map(r => ({ name: r.name, amount: r.net }))
-        .sort((a, b) => b.amount - a.amount);
-
-      const losers = rows
-        .filter(r => r.net < -0.009)
-        .map(r => ({ name: r.name, amount: Math.abs(r.net) }))
-        .sort((a, b) => b.amount - a.amount);
-
-      const settlements = [];
-      let i = 0;
-      let j = 0;
-
-      while (i < losers.length && j < winners.length) {
-        const payAmount = Math.min(losers[i].amount, winners[j].amount);
-        if (payAmount > 0.009) {
-          settlements.push({ from: losers[i].name, to: winners[j].name, amount: payAmount });
-        }
-        losers[i].amount -= payAmount;
-        winners[j].amount -= payAmount;
-
-        if (losers[i].amount < 0.01) i++;
-        if (winners[j].amount < 0.01) j++;
-      }
-
-      return settlements;
     }
 
     function calculateAll() {
@@ -364,44 +290,84 @@
 
       const status = document.getElementById('balanceStatus');
       if (Math.abs(diff) < 0.01) {
-        status.textContent = '✅ Balanced';
+        status.textContent = '✅ Balanced (0)';
         status.className = 'summary-value balanced';
+      } else if (diff > 0) {
+        status.textContent = '⚠️ Total is Plus';
+        status.className = 'summary-value not-balanced';
       } else {
-        status.textContent = '⚠️ Not Balanced';
+        status.textContent = '⚠️ Total is Minus';
         status.className = 'summary-value not-balanced';
       }
 
-      const net = totalReturned - totalIn;
+      refreshAuditPlayerDropdown();
+    }
 
-      const netResult = document.getElementById('netResult');
-      netResult.textContent = (net >= 0 ? '+' : '') + money(net);
-      netResult.className = 'summary-value ' + (net >= 0 ? 'positive' : 'negative');
+    function refreshAuditPlayerDropdown() {
+      const dropdown = document.getElementById('auditPlayer');
+      const currentValue = dropdown.value;
 
-      const finalStatus = document.getElementById('finalStatus');
-      if (Math.abs(net) < 0.01) {
-        finalStatus.textContent = '✅ Balanced (0)';
-        finalStatus.className = 'summary-value balanced';
-      } else {
-        finalStatus.textContent = net > 0 ? '⚠️ Extra Money' : '⚠️ Missing Money';
-        finalStatus.className = 'summary-value not-balanced';
+      const names = [];
+      document.querySelectorAll('.player-name').forEach(input => {
+        const name = input.value.trim();
+        if (name && !names.includes(name)) names.push(name);
+      });
+
+      dropdown.innerHTML = '';
+      names.forEach(name => {
+        const option = document.createElement('option');
+        option.value = name;
+        option.textContent = name;
+        dropdown.appendChild(option);
+      });
+
+      if (names.includes(currentValue)) {
+        dropdown.value = currentValue;
+      }
+    }
+
+    function formatTime(date) {
+      return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    }
+
+    function logBuyin() {
+      const player = document.getElementById('auditPlayer').value;
+      if (!player) {
+        alert('Enter a player name first.');
+        return;
       }
 
-    } else if (settlements.length === 0 && Math.abs(diff) < 0.01) {
-        list.innerHTML = '<div class="balanced">Everyone is even. No settlement needed.</div>';
-      } else if (Math.abs(diff) >= 0.01) {
-        list.innerHTML = '<div class="not-balanced">Game is not balanced yet. Fix chips returned before settling.</div>';
-      } else {
-        list.innerHTML = settlements.map(s => `
-          <div class="settlement-line">
-            <div><strong>${s.from}</strong> pays <strong>${s.to}</strong></div>
-            <div><strong>${money(s.amount)}</strong></div>
-          </div>
-        `).join('');
-      }
+      runningBuyinCount += 1;
+      auditLog.push({
+        time: formatTime(new Date()),
+        player: player,
+        count: runningBuyinCount
+      });
+
+      renderAuditLog();
+    }
+
+    function renderAuditLog() {
+      const tbody = document.getElementById('auditRows');
+      tbody.innerHTML = '';
+
+      auditLog.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${item.time}</td>
+          <td>${item.player}</td>
+          <td class="right">${item.count}</td>
+        `;
+        tbody.appendChild(tr);
+      });
     }
 
     function resetAll() {
       document.getElementById('playerRows').innerHTML = '';
+      auditLog = [];
+      runningBuyinCount = 0;
+      renderAuditLog();
+
       addPlayerRow();
       addPlayerRow();
       addPlayerRow();
