@@ -28,6 +28,10 @@
       font-size: 26px;
     }
 
+    h2 {
+      margin-top: 0;
+    }
+
     .subtitle {
       color: #666;
       margin-bottom: 20px;
@@ -47,7 +51,7 @@
       margin-bottom: 5px;
     }
 
-    input, select {
+    input {
       width: 100%;
       padding: 10px;
       border: 1px solid #ccc;
@@ -112,12 +116,6 @@
       background: #dc2626;
       color: white;
       padding: 8px 10px;
-    }
-
-    .log-btn {
-      background: #16a34a;
-      color: white;
-      width: 100%;
     }
 
     .section {
@@ -187,7 +185,9 @@
 <body>
   <div class="container">
     <h1>💰 Poker Weekly Tracker</h1>
-    <div class="subtitle">Enter weekly game data and make sure the total difference is zero.</div>
+    <div class="subtitle">
+      Enter weekly poker data. Audit log is automatically created when Total Buy-ins increases.
+    </div>
 
     <div class="settings">
       <div>
@@ -254,28 +254,17 @@
     </div>
 
     <div class="section">
-      <h2>Buy-in Audit Log</h2>
+      <h2>Automatic Buy-in Audit Log</h2>
       <p style="color:#666; margin-bottom:12px;">
-        When someone buys in, select the player and click Log Buy-in.
+        Example: if Jay changes Total Buy-ins from 1 to 2, the log will show “Jay - 2”.
       </p>
-
-      <div class="settings" style="grid-template-columns: 2fr 1fr;">
-        <div>
-          <label>Select Player</label>
-          <select id="auditPlayer"></select>
-        </div>
-
-        <div style="display:flex; align-items:end;">
-          <button class="log-btn" id="logBuyinBtn" type="button">Log Buy-in</button>
-        </div>
-      </div>
 
       <table>
         <thead>
           <tr>
             <th>Time</th>
             <th>Player</th>
-            <th class="right">Running Buy-in Count</th>
+            <th class="right">Buy-in Count</th>
           </tr>
         </thead>
         <tbody id="auditRows"></tbody>
@@ -290,7 +279,6 @@
     ];
 
     let auditLog = [];
-    let runningBuyinCount = 0;
 
     function money(value) {
       return "$" + Number(value || 0).toFixed(2);
@@ -300,27 +288,68 @@
       return new Date().toISOString().slice(0, 10);
     }
 
+    function formatTime(date) {
+      return date.toLocaleTimeString([], {
+        hour: "numeric",
+        minute: "2-digit"
+      });
+    }
+
     function addPlayerRow(name = "", buyins = "1", chips = "") {
       const tbody = document.getElementById("playerRows");
       const tr = document.createElement("tr");
 
+      tr.dataset.lastBuyins = buyins;
+
       tr.innerHTML = `
-        <td><input type="text" class="player-name" placeholder="Name" value="${name}"></td>
-        <td><input type="number" class="buyins right" min="0" value="${buyins}"></td>
-        <td><input type="number" class="chips right" min="0" placeholder="0" value="${chips}"></td>
+        <td>
+          <input type="text" class="player-name" placeholder="Name" value="${name}">
+        </td>
+        <td>
+          <input type="number" class="buyins right" min="0" value="${buyins}">
+        </td>
+        <td>
+          <input type="number" class="chips right" min="0" placeholder="0" value="${chips}">
+        </td>
         <td class="right money-in">$0.00</td>
         <td class="right cash-returned">$0.00</td>
         <td class="right net">$0.00</td>
-        <td><button class="delete-btn" type="button">X</button></td>
+        <td>
+          <button class="delete-btn" type="button">X</button>
+        </td>
       `;
 
       tbody.appendChild(tr);
 
-      tr.querySelector(".player-name").addEventListener("input", calculateAll);
-      tr.querySelector(".buyins").addEventListener("input", calculateAll);
-      tr.querySelector(".chips").addEventListener("input", calculateAll);
+      const nameInput = tr.querySelector(".player-name");
+      const buyinsInput = tr.querySelector(".buyins");
+      const chipsInput = tr.querySelector(".chips");
+      const deleteBtn = tr.querySelector(".delete-btn");
 
-      tr.querySelector(".delete-btn").addEventListener("click", function () {
+      nameInput.addEventListener("input", calculateAll);
+      chipsInput.addEventListener("input", calculateAll);
+
+      buyinsInput.addEventListener("input", function () {
+        const playerName = nameInput.value.trim() || "Unknown Player";
+        const oldBuyins = Number(tr.dataset.lastBuyins || 0);
+        const newBuyins = Number(buyinsInput.value || 0);
+
+        if (newBuyins > oldBuyins) {
+          for (let count = oldBuyins + 1; count <= newBuyins; count++) {
+            auditLog.push({
+              time: formatTime(new Date()),
+              player: playerName,
+              count: count
+            });
+          }
+          renderAuditLog();
+        }
+
+        tr.dataset.lastBuyins = newBuyins;
+        calculateAll();
+      });
+
+      deleteBtn.addEventListener("click", function () {
         tr.remove();
         calculateAll();
       });
@@ -358,7 +387,14 @@
         netCell.className = "right net " + (net >= 0 ? "positive" : "negative");
 
         if (name) {
-          rows.push({ name, buyins, chipsReturned, moneyIn, cashReturned, net });
+          rows.push({
+            name,
+            buyins,
+            chipsReturned,
+            moneyIn,
+            cashReturned,
+            net
+          });
         }
       });
 
@@ -388,60 +424,6 @@
         status.textContent = "⚠️ Total is Minus";
         status.className = "summary-value not-balanced";
       }
-
-      refreshAuditPlayerDropdown();
-    }
-
-    function refreshAuditPlayerDropdown() {
-      const dropdown = document.getElementById("auditPlayer");
-      const currentValue = dropdown.value;
-      const names = [];
-
-      document.querySelectorAll(".player-name").forEach(input => {
-        const name = input.value.trim();
-        if (name && !names.includes(name)) {
-          names.push(name);
-        }
-      });
-
-      dropdown.innerHTML = "";
-
-      names.forEach(name => {
-        const option = document.createElement("option");
-        option.value = name;
-        option.textContent = name;
-        dropdown.appendChild(option);
-      });
-
-      if (names.includes(currentValue)) {
-        dropdown.value = currentValue;
-      }
-    }
-
-    function formatTime(date) {
-      return date.toLocaleTimeString([], {
-        hour: "numeric",
-        minute: "2-digit"
-      });
-    }
-
-    function logBuyin() {
-      const player = document.getElementById("auditPlayer").value;
-
-      if (!player) {
-        alert("Enter a player name first.");
-        return;
-      }
-
-      runningBuyinCount++;
-
-      auditLog.push({
-        time: formatTime(new Date()),
-        player: player,
-        count: runningBuyinCount
-      });
-
-      renderAuditLog();
     }
 
     function renderAuditLog() {
@@ -463,7 +445,6 @@
 
     function resetAll() {
       auditLog = [];
-      runningBuyinCount = 0;
       renderAuditLog();
       loadDefaultPlayers();
     }
@@ -479,7 +460,6 @@
       });
 
       document.getElementById("resetBtn").addEventListener("click", resetAll);
-      document.getElementById("logBuyinBtn").addEventListener("click", logBuyin);
 
       loadDefaultPlayers();
     }
