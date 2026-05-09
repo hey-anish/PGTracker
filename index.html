@@ -242,9 +242,19 @@
       </div>
     </div>
 
-    <div class="settlement">
-      <h2>Who Pays Whom</h2>
-      <div id="settlementList">Enter player data to calculate settlement.</div>
+    <div class="summary" style="margin-top:20px;">
+      <h2>Final Check</h2>
+      <div class="summary-grid">
+        <div class="summary-box">
+          <div class="summary-label">Net Result</div>
+          <div class="summary-value" id="netResult">$0.00</div>
+        </div>
+        <div class="summary-box">
+          <div class="summary-label">Status</div>
+          <div class="summary-value" id="finalStatus">Not Checked</div>
+        </div>
+      </div>
+    </div>
     </div>
   </div>
 
@@ -361,12 +371,22 @@
         status.className = 'summary-value not-balanced';
       }
 
-      const settlements = calculateSettlements(rows);
-      const list = document.getElementById('settlementList');
+      const net = totalReturned - totalIn;
 
-      if (rows.length === 0) {
-        list.innerHTML = 'Enter player data to calculate settlement.';
-      } else if (settlements.length === 0 && Math.abs(diff) < 0.01) {
+      const netResult = document.getElementById('netResult');
+      netResult.textContent = (net >= 0 ? '+' : '') + money(net);
+      netResult.className = 'summary-value ' + (net >= 0 ? 'positive' : 'negative');
+
+      const finalStatus = document.getElementById('finalStatus');
+      if (Math.abs(net) < 0.01) {
+        finalStatus.textContent = '✅ Balanced (0)';
+        finalStatus.className = 'summary-value balanced';
+      } else {
+        finalStatus.textContent = net > 0 ? '⚠️ Extra Money' : '⚠️ Missing Money';
+        finalStatus.className = 'summary-value not-balanced';
+      }
+
+    } else if (settlements.length === 0 && Math.abs(diff) < 0.01) {
         list.innerHTML = '<div class="balanced">Everyone is even. No settlement needed.</div>';
       } else if (Math.abs(diff) >= 0.01) {
         list.innerHTML = '<div class="not-balanced">Game is not balanced yet. Fix chips returned before settling.</div>';
