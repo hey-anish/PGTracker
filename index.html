@@ -6,107 +6,33 @@
   <title>Weekly Poker Settlement Tracker</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: Arial, sans-serif;
-      background: #f5f7fb;
-      color: #1f2937;
-      padding: 16px;
-    }
-    .container {
-      max-width: 1100px;
-      margin: auto;
-    }
-    .header {
-      background: #111827;
-      color: white;
-      padding: 18px;
-      border-radius: 14px;
-      margin-bottom: 16px;
-    }
+    body { font-family: Arial, sans-serif; background: #f5f7fb; color: #1f2937; padding: 16px; }
+    .container { max-width: 1100px; margin: auto; }
+    .header { background: #111827; color: white; padding: 18px; border-radius: 14px; margin-bottom: 16px; }
     .header h1 { font-size: 24px; margin-bottom: 6px; }
     .header p { color: #d1d5db; font-size: 14px; }
-    .card {
-      background: white;
-      border-radius: 14px;
-      padding: 16px;
-      margin-bottom: 16px;
-      box-shadow: 0 2px 8px rgba(0,0,0,.08);
-    }
-    .row {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      margin-bottom: 12px;
-    }
-    label {
-      display: block;
-      font-size: 13px;
-      font-weight: bold;
-      margin-bottom: 5px;
-      color: #374151;
-    }
-    input, select, button {
-      width: 100%;
-      padding: 10px;
-      border-radius: 9px;
-      border: 1px solid #d1d5db;
-      font-size: 14px;
-    }
-    button {
-      border: none;
-      cursor: pointer;
-      font-weight: bold;
-    }
+    .card { background: white; border-radius: 14px; padding: 16px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,.08); }
+    .row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 12px; }
+    label { display: block; font-size: 13px; font-weight: bold; margin-bottom: 5px; color: #374151; }
+    input, button { width: 100%; padding: 10px; border-radius: 9px; border: 1px solid #d1d5db; font-size: 14px; }
+    button { border: none; cursor: pointer; font-weight: bold; }
     .primary { background: #2563eb; color: white; }
     .success { background: #16a34a; color: white; }
     .danger { background: #dc2626; color: white; }
     .secondary { background: #6b7280; color: white; }
     .table-wrap { overflow-x: auto; }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 850px;
-    }
-    th, td {
-      padding: 10px;
-      border-bottom: 1px solid #e5e7eb;
-      text-align: left;
-      font-size: 14px;
-    }
+    table { width: 100%; border-collapse: collapse; min-width: 850px; }
+    th, td { padding: 10px; border-bottom: 1px solid #e5e7eb; text-align: left; font-size: 14px; }
     th { background: #f3f4f6; }
     .right { text-align: right; }
     .positive { color: #16a34a; font-weight: bold; }
     .negative { color: #dc2626; font-weight: bold; }
-    .pill {
-      display: inline-block;
-      padding: 4px 8px;
-      border-radius: 999px;
-      background: #e5e7eb;
-      font-size: 12px;
-      font-weight: bold;
-    }
-    .settlement {
-      padding: 12px;
-      border-radius: 10px;
-      background: #fff7ed;
-      border-left: 5px solid #f97316;
-      margin-bottom: 8px;
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-    }
-    .message {
-      padding: 10px;
-      border-radius: 10px;
-      margin-top: 10px;
-      display: none;
-    }
+    .pill { display: inline-block; padding: 4px 8px; border-radius: 999px; background: #e5e7eb; font-size: 12px; font-weight: bold; }
+    .settlement { padding: 12px; border-radius: 10px; background: #fff7ed; border-left: 5px solid #f97316; margin-bottom: 8px; display: flex; justify-content: space-between; gap: 10px; }
+    .message { padding: 10px; border-radius: 10px; margin-top: 10px; display: none; }
     .message.ok { background: #dcfce7; color: #166534; display: block; }
     .message.error { background: #fee2e2; color: #991b1b; display: block; }
-    @media (max-width: 800px) {
-      .row { grid-template-columns: 1fr; }
-      body { padding: 8px; }
-    }
+    @media (max-width: 800px) { .row { grid-template-columns: 1fr; } body { padding: 8px; } }
   </style>
 </head>
 <body>
@@ -128,18 +54,18 @@
         </div>
         <div>
           <label>Buy-in Amount ($)</label>
-          <input id="buyinAmount" type="number" value="50" min="1" />
+          <input id="buyinAmount" type="number" value="50" min="1" oninput="recalculateOnly()" />
         </div>
         <div>
           <label>Chips per $1</label>
-          <input id="chipsPerDollar" type="number" value="4" min="1" />
+          <input id="chipsPerDollar" type="number" value="4" min="1" oninput="recalculateOnly()" />
         </div>
       </div>
       <div class="row">
-        <button class="primary" onclick="addPlayer()">+ Add Player</button>
-        <button class="secondary" onclick="loadMonth()">Load Month</button>
-        <button class="success" onclick="saveWeek()">Save This Week</button>
-        <button class="danger" onclick="resetCurrentWeek()">Reset Week</button>
+        <button class="primary" type="button" onclick="addPlayer()">+ Add Player</button>
+        <button class="secondary" type="button" onclick="loadMonth()">Load Month</button>
+        <button class="success" type="button" onclick="saveWeek()">Save This Week</button>
+        <button class="danger" type="button" onclick="resetCurrentWeek()">Reset Week</button>
       </div>
       <div id="message" class="message"></div>
     </div>
@@ -195,14 +121,13 @@
   </div>
 
   <script>
-    // STEP 1: Replace this with your deployed Google Apps Script Web App URL.
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxgkg8YtIp-z_fvbmiA2fy3rQb6PrgoMLnUeAsZyhMJrEMAn9E_N7DVq_-fkKooqNX-/exec";
 
     let players = [
-      { name: "", totalBuyins: 1, chipsReturned: 0 },
-      { name: "", totalBuyins: 1, chipsReturned: 0 },
-      { name: "", totalBuyins: 1, chipsReturned: 0 },
-      { name: "", totalBuyins: 1, chipsReturned: 0 }
+      { name: "", totalBuyins: "1", chipsReturned: "" },
+      { name: "", totalBuyins: "1", chipsReturned: "" },
+      { name: "", totalBuyins: "1", chipsReturned: "" },
+      { name: "", totalBuyins: "1", chipsReturned: "" }
     ];
 
     const money = value => "$" + Number(value || 0).toFixed(2);
@@ -225,7 +150,7 @@
     function calculateRows(sourcePlayers = players) {
       const { buyinAmount, chipsPerDollar } = getSettings();
       return sourcePlayers
-        .filter(p => p.name.trim())
+        .filter(p => String(p.name || "").trim())
         .map(p => {
           const totalBuyins = Number(p.totalBuyins || 0);
           const chipsReturned = Number(p.chipsReturned || 0);
@@ -233,7 +158,7 @@
           const cashOut = chipsReturned / chipsPerDollar;
           const net = cashOut - spent;
           return {
-            player: p.name.trim(),
+            player: String(p.name || "").trim(),
             totalBuyins,
             extraBuyins: Math.max(0, totalBuyins - 1),
             chipsReturned,
@@ -245,55 +170,70 @@
     }
 
     function calculateSettlements(summaryRows) {
-      const winners = summaryRows
-        .filter(r => r.net > 0.009)
-        .map(r => ({ name: r.player, balance: r.net }))
-        .sort((a,b) => b.balance - a.balance);
-
-      const losers = summaryRows
-        .filter(r => r.net < -0.009)
-        .map(r => ({ name: r.player, balance: r.net }))
-        .sort((a,b) => a.balance - b.balance);
-
+      const winners = summaryRows.filter(r => r.net > 0.009).map(r => ({ name: r.player, balance: r.net })).sort((a,b) => b.balance - a.balance);
+      const losers = summaryRows.filter(r => r.net < -0.009).map(r => ({ name: r.player, balance: r.net })).sort((a,b) => a.balance - b.balance);
       const settlements = [];
       let wi = 0, li = 0;
-
       while (wi < winners.length && li < losers.length) {
         const amount = Math.min(winners[wi].balance, Math.abs(losers[li].balance));
-        if (amount > 0.009) {
-          settlements.push({ from: losers[li].name, to: winners[wi].name, amount });
-        }
+        if (amount > 0.009) settlements.push({ from: losers[li].name, to: winners[wi].name, amount });
         winners[wi].balance -= amount;
         losers[li].balance += amount;
         if (Math.abs(winners[wi].balance) < 0.01) wi++;
         if (Math.abs(losers[li].balance) < 0.01) li++;
       }
-
       return settlements;
     }
 
-    function renderPlayers() {
+    function renderPlayersOnce() {
       const tbody = document.getElementById("playersBody");
       tbody.innerHTML = "";
 
       players.forEach((p, index) => {
-        const row = calculateRows([p])[0] || {
-          extraBuyins: 0, spent: 0, cashOut: 0, net: 0
-        };
-
         const tr = document.createElement("tr");
+        tr.id = `playerRow${index}`;
         tr.innerHTML = `
-          <td><input value="${p.name}" placeholder="Player name" oninput="players[${index}].name=this.value; renderAll();" /></td>
-          <td><input class="right" type="number" min="1" value="${p.totalBuyins}" oninput="players[${index}].totalBuyins=this.value; renderAll();" /></td>
-          <td class="right"><span class="pill">${row.extraBuyins}</span></td>
-          <td><input class="right" type="number" min="0" value="${p.chipsReturned}" oninput="players[${index}].chipsReturned=this.value; renderAll();" /></td>
-          <td class="right">${money(row.spent)}</td>
-          <td class="right">${money(row.cashOut)}</td>
-          <td class="right ${row.net >= 0 ? "positive" : "negative"}">${row.net >= 0 ? "+" : ""}${money(row.net)}</td>
-          <td><button class="danger" onclick="removePlayer(${index})">X</button></td>
+          <td><input id="name${index}" value="${p.name}" placeholder="Player name" oninput="updatePlayerValue(${index}, 'name', this.value)" /></td>
+          <td><input id="buyins${index}" class="right" type="number" min="1" value="${p.totalBuyins}" oninput="updatePlayerValue(${index}, 'totalBuyins', this.value)" /></td>
+          <td class="right"><span class="pill" id="extra${index}">0</span></td>
+          <td><input id="chips${index}" class="right" type="number" min="0" value="${p.chipsReturned}" placeholder="0" oninput="updatePlayerValue(${index}, 'chipsReturned', this.value)" /></td>
+          <td class="right" id="spent${index}">$0.00</td>
+          <td class="right" id="cashout${index}">$0.00</td>
+          <td class="right" id="net${index}">$0.00</td>
+          <td><button class="danger" type="button" onclick="removePlayer(${index})">X</button></td>
         `;
         tbody.appendChild(tr);
       });
+
+      recalculateOnly();
+    }
+
+    function updatePlayerValue(index, field, value) {
+      players[index][field] = value;
+      updateCalculatedCells(index);
+      renderWeeklySettlement();
+    }
+
+    function updateCalculatedCells(index) {
+      const p = players[index];
+      const { buyinAmount, chipsPerDollar } = getSettings();
+      const totalBuyins = Number(p.totalBuyins || 0);
+      const chipsReturned = Number(p.chipsReturned || 0);
+      const spent = totalBuyins * buyinAmount;
+      const cashOut = chipsReturned / chipsPerDollar;
+      const net = cashOut - spent;
+
+      document.getElementById(`extra${index}`).textContent = Math.max(0, totalBuyins - 1);
+      document.getElementById(`spent${index}`).textContent = money(spent);
+      document.getElementById(`cashout${index}`).textContent = money(cashOut);
+      const netCell = document.getElementById(`net${index}`);
+      netCell.textContent = `${net >= 0 ? "+" : ""}${money(net)}`;
+      netCell.className = `right ${net >= 0 ? "positive" : "negative"}`;
+    }
+
+    function recalculateOnly() {
+      players.forEach((_, index) => updateCalculatedCells(index));
+      renderWeeklySettlement();
     }
 
     function renderSettlement(elementId, settlements) {
@@ -331,36 +271,32 @@
       renderSettlement("monthlySettlement", calculateSettlements(rows));
     }
 
-    function renderAll() {
-      renderPlayers();
-      renderWeeklySettlement();
-    }
-
     function addPlayer() {
-      players.push({ name: "", totalBuyins: 1, chipsReturned: 0 });
-      renderAll();
+      players.push({ name: "", totalBuyins: "1", chipsReturned: "" });
+      renderPlayersOnce();
     }
 
     function removePlayer(index) {
       players.splice(index, 1);
-      renderAll();
+      renderPlayersOnce();
     }
 
     function resetCurrentWeek() {
-      players = players.map(p => ({ name: p.name, totalBuyins: 1, chipsReturned: 0 }));
-      renderAll();
+      players = players.map(p => ({ name: p.name, totalBuyins: "1", chipsReturned: "" }));
+      renderPlayersOnce();
     }
 
     function showMessage(text, type) {
       const msg = document.getElementById("message");
       msg.textContent = text;
       msg.className = "message " + type;
-      setTimeout(() => { msg.className = "message"; }, 4000);
+      setTimeout(() => { msg.className = "message"; }, 5000);
     }
 
     async function saveWeek() {
       const settings = getSettings();
       const rows = calculateRows();
+
       if (!settings.gameDate || !settings.monthKey) {
         showMessage("Please select game date and month.", "error");
         return;
@@ -370,52 +306,63 @@
         return;
       }
       if (GOOGLE_SCRIPT_URL.includes("PASTE_")) {
-        showMessage("Add your Google Apps Script URL inside the code first.", "error");
+        showMessage("Add your Google Apps Script URL inside index.html first.", "error");
         return;
       }
 
-      const payload = {
-        action: "saveWeek",
-        gameDate: settings.gameDate,
-        monthKey: settings.monthKey,
-        buyinAmount: settings.buyinAmount,
-        chipsPerDollar: settings.chipsPerDollar,
-        rows
-      };
+      try {
+        const payload = {
+          action: "saveWeek",
+          gameDate: settings.gameDate,
+          monthKey: settings.monthKey,
+          buyinAmount: settings.buyinAmount,
+          chipsPerDollar: settings.chipsPerDollar,
+          rows
+        };
 
-      const response = await fetch(GOOGLE_SCRIPT_URL, {
-        method: "POST",
-        body: JSON.stringify(payload)
-      });
-      const result = await response.json();
-      if (result.ok) {
-        showMessage("Week saved to Google Sheets.", "ok");
-        loadMonth();
-      } else {
-        showMessage(result.error || "Save failed.", "error");
+        const response = await fetch(GOOGLE_SCRIPT_URL, {
+          method: "POST",
+          body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+        if (result.ok) {
+          showMessage("Week saved to Google Sheets.", "ok");
+          loadMonth();
+        } else {
+          showMessage(result.error || "Save failed.", "error");
+        }
+      } catch (err) {
+        showMessage("Save failed: " + err.message, "error");
       }
     }
 
     async function loadMonth() {
       const { monthKey } = getSettings();
       if (GOOGLE_SCRIPT_URL.includes("PASTE_")) {
-        showMessage("Add your Google Apps Script URL inside the code first.", "error");
+        showMessage("Add your Google Apps Script URL inside index.html first.", "error");
         return;
       }
-      const url = `${GOOGLE_SCRIPT_URL}?action=getMonth&monthKey=${encodeURIComponent(monthKey)}`;
-      const response = await fetch(url);
-      const result = await response.json();
-      if (!result.ok) {
-        showMessage(result.error || "Month load failed.", "error");
-        return;
+
+      try {
+        const url = `${GOOGLE_SCRIPT_URL}?action=getMonth&monthKey=${encodeURIComponent(monthKey)}`;
+        const response = await fetch(url);
+        const result = await response.json();
+        if (!result.ok) {
+          showMessage(result.error || "Month load failed.", "error");
+          return;
+        }
+        renderMonthlySummary(result.summary || []);
+        showMessage("Monthly data loaded.", "ok");
+      } catch (err) {
+        showMessage("Load failed: " + err.message, "error");
       }
-      renderMonthlySummary(result.summary || []);
-      showMessage("Monthly data loaded.", "ok");
     }
 
     initDates();
-    renderAll();
+    renderPlayersOnce();
   </script>
+
 
 </body>
 </html>
