@@ -14,7 +14,7 @@
     }
 
     .container {
-      max-width: 1050px;
+      max-width: 1150px;
       margin: 0 auto;
       background: white;
       padding: 20px;
@@ -57,7 +57,7 @@
 
     th, td {
       border-bottom: 1px solid #e5e7eb;
-      padding: 10px;
+      padding: 9px;
       text-align: left;
       vertical-align: middle;
     }
@@ -114,9 +114,11 @@
     .balanced { color: #16a34a; font-weight: bold; }
     .not-balanced { color: #dc2626; font-weight: bold; }
 
+    .table-wrap { overflow-x: auto; }
+
     @media (max-width: 800px) {
       .settings, .summary-grid { grid-template-columns: 1fr; }
-      table { font-size: 13px; }
+      table { font-size: 13px; min-width: 900px; }
       th, td { padding: 7px; }
     }
   </style>
@@ -124,7 +126,7 @@
 <body>
   <div class="container">
     <h1>💰 Poker Weekly Tracker</h1>
-    <div class="subtitle">Step 1: Enter weekly game data, confirm total is zero, and keep a buy-in audit log.</div>
+    <div class="subtitle">Enter weekly game data and make sure the total difference is zero.</div>
 
     <div class="settings">
       <div>
@@ -141,24 +143,26 @@
       </div>
     </div>
 
-    <table>
-      <thead>
-        <tr>
-          <th style="width:25%;">Player Name</th>
-          <th class="right">Total Buy-ins</th>
-          <th class="right">Chips Returned</th>
-          <th class="right">Money Put In</th>
-          <th class="right">Cash Value Returned</th>
-          <th class="right">Net Win / Loss</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody id="playerRows"></tbody>
-    </table>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:22%;">Player Name</th>
+            <th class="right">Total Buy-ins</th>
+            <th class="right">Chips Returned</th>
+            <th class="right">Money Put In</th>
+            <th class="right">Cash Value Returned</th>
+            <th class="right">Net Win / Loss</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="playerRows"></tbody>
+      </table>
+    </div>
 
     <div class="btn-row">
-      <button class="add-btn" onclick="addPlayerRow()">+ Add Player</button>
-      <button class="reset-btn" onclick="resetAll()">Reset Players</button>
+      <button class="add-btn" id="addPlayerBtn" type="button">+ Add Player</button>
+      <button class="reset-btn" id="resetBtn" type="button">Reset Default Players</button>
     </div>
 
     <div class="section">
@@ -193,7 +197,7 @@
           <select id="auditPlayer"></select>
         </div>
         <div style="display:flex; align-items:end;">
-          <button class="log-btn" onclick="logBuyin()">Log Buy-in</button>
+          <button class="log-btn" id="logBuyinBtn" type="button">Log Buy-in</button>
         </div>
       </div>
 
@@ -211,6 +215,8 @@
   </div>
 
   <script>
+    const DEFAULT_PLAYERS = ['SBB', 'Jay', 'Naveen', 'Kiran', 'Anish', 'Ranjan', 'Bhanu', 'Raj', 'Krishna', 'Mandy', 'Gopi'];
+
     let auditLog = [];
     let runningBuyinCount = 0;
 
@@ -226,27 +232,66 @@
       const tbody = document.getElementById('playerRows');
       const tr = document.createElement('tr');
 
-      tr.innerHTML = `
-        <td><input type="text" class="player-name" placeholder="Name" value="${name}"></td>
-        <td><input type="number" class="buyins right" min="0" value="${buyins}"></td>
-        <td><input type="number" class="chips right" min="0" placeholder="0" value="${chips}"></td>
-        <td class="right money-in">$0.00</td>
-        <td class="right cash-returned">$0.00</td>
-        <td class="right net">$0.00</td>
-        <td><button class="delete-btn" onclick="deleteRow(this)">X</button></td>
-      `;
+      const nameTd = document.createElement('td');
+      const nameInput = document.createElement('input');
+      nameInput.type = 'text';
+      nameInput.className = 'player-name';
+      nameInput.placeholder = 'Name';
+      nameInput.value = name;
+      nameInput.addEventListener('input', calculateAll);
+      nameTd.appendChild(nameInput);
+
+      const buyinTd = document.createElement('td');
+      const buyinInput = document.createElement('input');
+      buyinInput.type = 'number';
+      buyinInput.className = 'buyins right';
+      buyinInput.min = '0';
+      buyinInput.value = buyins;
+      buyinInput.addEventListener('input', calculateAll);
+      buyinTd.appendChild(buyinInput);
+
+      const chipsTd = document.createElement('td');
+      const chipsInput = document.createElement('input');
+      chipsInput.type = 'number';
+      chipsInput.className = 'chips right';
+      chipsInput.min = '0';
+      chipsInput.placeholder = '0';
+      chipsInput.value = chips;
+      chipsInput.addEventListener('input', calculateAll);
+      chipsTd.appendChild(chipsInput);
+
+      const moneyInTd = document.createElement('td');
+      moneyInTd.className = 'right money-in';
+      moneyInTd.textContent = '$0.00';
+
+      const cashReturnedTd = document.createElement('td');
+      cashReturnedTd.className = 'right cash-returned';
+      cashReturnedTd.textContent = '$0.00';
+
+      const netTd = document.createElement('td');
+      netTd.className = 'right net';
+      netTd.textContent = '$0.00';
+
+      const deleteTd = document.createElement('td');
+      const deleteBtn = document.createElement('button');
+      deleteBtn.type = 'button';
+      deleteBtn.className = 'delete-btn';
+      deleteBtn.textContent = 'X';
+      deleteBtn.addEventListener('click', function () {
+        tr.remove();
+        calculateAll();
+      });
+      deleteTd.appendChild(deleteBtn);
+
+      tr.appendChild(nameTd);
+      tr.appendChild(buyinTd);
+      tr.appendChild(chipsTd);
+      tr.appendChild(moneyInTd);
+      tr.appendChild(cashReturnedTd);
+      tr.appendChild(netTd);
+      tr.appendChild(deleteTd);
 
       tbody.appendChild(tr);
-
-      tr.querySelectorAll('input').forEach(input => {
-        input.addEventListener('input', calculateAll);
-      });
-
-      calculateAll();
-    }
-
-    function deleteRow(button) {
-      button.closest('tr').remove();
       calculateAll();
     }
 
@@ -306,8 +351,8 @@
     function refreshAuditPlayerDropdown() {
       const dropdown = document.getElementById('auditPlayer');
       const currentValue = dropdown.value;
-
       const names = [];
+
       document.querySelectorAll('.player-name').forEach(input => {
         const name = input.value.trim();
         if (name && !names.includes(name)) names.push(name);
@@ -338,12 +383,7 @@
       }
 
       runningBuyinCount += 1;
-      auditLog.push({
-        time: formatTime(new Date()),
-        player: player,
-        count: runningBuyinCount
-      });
-
+      auditLog.push({ time: formatTime(new Date()), player, count: runningBuyinCount });
       renderAuditLog();
     }
 
@@ -362,23 +402,32 @@
       });
     }
 
-    function resetAll() {
+    function loadDefaultPlayers() {
       document.getElementById('playerRows').innerHTML = '';
+      DEFAULT_PLAYERS.forEach(name => addPlayerRow(name, '1', ''));
+      calculateAll();
+    }
+
+    function resetAll() {
       auditLog = [];
       runningBuyinCount = 0;
       renderAuditLog();
-
-      addPlayerRow();
-      addPlayerRow();
-      addPlayerRow();
-      addPlayerRow();
+      loadDefaultPlayers();
     }
 
-    document.getElementById('gameDate').value = todayDate();
-    document.getElementById('buyinAmount').addEventListener('input', calculateAll);
-    document.getElementById('chipsPerDollar').addEventListener('input', calculateAll);
+    function initApp() {
+      document.getElementById('gameDate').value = todayDate();
+      document.getElementById('buyinAmount').addEventListener('input', calculateAll);
+      document.getElementById('chipsPerDollar').addEventListener('input', calculateAll);
+      document.getElementById('addPlayerBtn').addEventListener('click', function () {
+        addPlayerRow('', '1', '');
+      });
+      document.getElementById('resetBtn').addEventListener('click', resetAll);
+      document.getElementById('logBuyinBtn').addEventListener('click', logBuyin);
+      loadDefaultPlayers();
+    }
 
-    resetAll();
+    window.addEventListener('DOMContentLoaded', initApp);
   </script>
 </body>
 </html>
