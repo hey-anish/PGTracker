@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Weekly Poker Settlement Tracker</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f7fb;
+      color: #1f2937;
+      padding: 16px;
+    }
+    .container {
+      max-width: 1100px;
+      margin: auto;
+    }
+    .header {
+      background: #111827;
+      color: white;
+      padding: 18px;
+      border-radius: 14px;
+      margin-bottom: 16px;
+    }
+    .header h1 { font-size: 24px; margin-bottom: 6px; }
+    .header p { color: #d1d5db; font-size: 14px; }
+    .card {
+      background: white;
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.08);
+    }
+    .row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: bold;
+      margin-bottom: 5px;
+      color: #374151;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      border-radius: 9px;
+      border: 1px solid #d1d5db;
+      font-size: 14px;
+    }
+    button {
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .primary { background: #2563eb; color: white; }
+    .success { background: #16a34a; color: white; }
+    .danger { background: #dc2626; color: white; }
+    .secondary { background: #6b7280; color: white; }
+    .table-wrap { overflow-x: auto; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 850px;
+    }
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #e5e7eb;
+      text-align: left;
+      font-size: 14px;
+    }
+    th { background: #f3f4f6; }
+    .right { text-align: right; }
+    .positive { color: #16a34a; font-weight: bold; }
+    .negative { color: #dc2626; font-weight: bold; }
+    .pill {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: #e5e7eb;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    .settlement {
+      padding: 12px;
+      border-radius: 10px;
+      background: #fff7ed;
+      border-left: 5px solid #f97316;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .message {
+      padding: 10px;
+      border-radius: 10px;
+      margin-top: 10px;
+      display: none;
+    }
+    .message.ok { background: #dcfce7; color: #166534; display: block; }
+    .message.error { background: #fee2e2; color: #991b1b; display: block; }
+    @media (max-width: 800px) {
+      .row { grid-template-columns: 1fr; }
+      body { padding: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>💰 Weekly Poker Settlement Tracker</h1>
+      <p>Enter weekly game results, save to Google Sheets, and calculate monthly settle-up.</p>
+    </div>
+
+    <div class="card">
+      <div class="row">
+        <div>
+          <label>Game Date</label>
+          <input id="gameDate" type="date" />
+        </div>
+        <div>
+          <label>Month</label>
+          <input id="monthKey" type="month" />
+        </div>
+        <div>
+          <label>Buy-in Amount ($)</label>
+          <input id="buyinAmount" type="number" value="50" min="1" />
+        </div>
+        <div>
+          <label>Chips per $1</label>
+          <input id="chipsPerDollar" type="number" value="4" min="1" />
+        </div>
+      </div>
+      <div class="row">
+        <button class="primary" onclick="addPlayer()">+ Add Player</button>
+        <button class="secondary" onclick="loadMonth()">Load Month</button>
+        <button class="success" onclick="saveWeek()">Save This Week</button>
+        <button class="danger" onclick="resetCurrentWeek()">Reset Week</button>
+      </div>
+      <div id="message" class="message"></div>
+    </div>
+
+    <div class="card">
+      <h2 style="margin-bottom:12px;">This Week Entry</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Player</th>
+              <th class="right">Total Buy-ins</th>
+              <th class="right">Extra Buy-ins</th>
+              <th class="right">Chips Returned</th>
+              <th class="right">Spent</th>
+              <th class="right">Cash Out</th>
+              <th class="right">Net</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="playersBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 style="margin-bottom:12px;">Current Week Settlement</h2>
+      <div id="weeklySettlement"></div>
+    </div>
+
+    <div class="card">
+      <h2 style="margin-bottom:12px;">Monthly Summary</h2>
+      <p style="margin-bottom:10px; color:#6b7280;">This uses all saved weeks for the selected month.</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Player</th>
+              <th class="right">Total Spent</th>
+              <th class="right">Total Cash Out</th>
+              <th class="right">Monthly Net</th>
+            </tr>
+          </thead>
+          <tbody id="monthlyBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 style="margin-bottom:12px;">Monthly Settle Up</h2>
+      <div id="monthlySettlement"></div>
+    </div>
+  </div>
+
+  <script>
+    // STEP 1: Replace this with your deployed Google Apps Script Web App URL.
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwyHlMrjcnIoad3VwHr49SdY4ttmIA5ebVc0PJEhdRugy_42gkJ2MnI0icACpvHiyWz/exec";
+
+    let players = [
+      { name: "", totalBuyins: 1, chipsReturned: 0 },
+      { name: "", totalBuyins: 1, chipsReturned: 0 },
+      { name: "", totalBuyins: 1, chipsReturned: 0 },
+      { name: "", totalBuyins: 1, chipsReturned: 0 }
+    ];
+
+    const money = value => "$" + Number(value || 0).toFixed(2);
+
+    function initDates() {
+      const today = new Date();
+      document.getElementById("gameDate").value = today.toISOString().slice(0,10);
+      document.getElementById("monthKey").value = today.toISOString().slice(0,7);
+    }
+
+    function getSettings() {
+      return {
+        gameDate: document.getElementById("gameDate").value,
+        monthKey: document.getElementById("monthKey").value,
+        buyinAmount: Number(document.getElementById("buyinAmount").value || 50),
+        chipsPerDollar: Number(document.getElementById("chipsPerDollar").value || 4)
+      };
+    }
+
+    function calculateRows(sourcePlayers = players) {
+      const { buyinAmount, chipsPerDollar } = getSettings();
+      return sourcePlayers
+        .filter(p => p.name.trim())
+        .map(p => {
+          const totalBuyins = Number(p.totalBuyins || 0);
+          const chipsReturned = Number(p.chipsReturned || 0);
+          const spent = totalBuyins * buyinAmount;
+          const cashOut = chipsReturned / chipsPerDollar;
+          const net = cashOut - spent;
+          return {
+            player: p.name.trim(),
+            totalBuyins,
+            extraBuyins: Math.max(0, totalBuyins - 1),
+            chipsReturned,
+            spent,
+            cashOut,
+            net
+          };
+        });
+    }
+
+    function calculateSettlements(summaryRows) {
+      const winners = summaryRows
+        .filter(r => r.net > 0.009)
+        .map(r => ({ name: r.player, balance: r.net }))
+        .sort((a,b) => b.balance - a.balance);
+
+      const losers = summaryRows
+        .filter(r => r.net < -0.009)
+        .map(r => ({ name: r.player, balance: r.net }))
+        .sort((a,b) => a.balance - b.balance);
+
+      const settlements = [];
+      let wi = 0, li = 0;
+
+      while (wi < winners.length && li < losers.length) {
+        const amount = Math.min(winners[wi].balance, Math.abs(losers[li].balance));
+        if (amount > 0.009) {
+          settlements.push({ from: losers[li].name, to: winners[wi].name, amount });
+        }
+        winners[wi].balance -= amount;
+        losers[li].balance += amount;
+        if (Math.abs(winners[wi].balance) < 0.01) wi++;
+        if (Math.abs(losers[li].balance) < 0.01) li++;
+      }
+
+      return settlements;
+    }
+
+    function renderPlayers() {
+      const tbody = document.getElementById("playersBody");
+      tbody.innerHTML = "";
+
+      players.forEach((p, index) => {
+        const row = calculateRows([p])[0] || {
+          extraBuyins: 0, spent: 0, cashOut: 0, net: 0
+        };
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td><input value="${p.name}" placeholder="Player name" oninput="players[${index}].name=this.value; renderAll();" /></td>
+          <td><input class="right" type="number" min="1" value="${p.totalBuyins}" oninput="players[${index}].totalBuyins=this.value; renderAll();" /></td>
+          <td class="right"><span class="pill">${row.extraBuyins}</span></td>
+          <td><input class="right" type="number" min="0" value="${p.chipsReturned}" oninput="players[${index}].chipsReturned=this.value; renderAll();" /></td>
+          <td class="right">${money(row.spent)}</td>
+          <td class="right">${money(row.cashOut)}</td>
+          <td class="right ${row.net >= 0 ? "positive" : "negative"}">${row.net >= 0 ? "+" : ""}${money(row.net)}</td>
+          <td><button class="danger" onclick="removePlayer(${index})">X</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderSettlement(elementId, settlements) {
+      const div = document.getElementById(elementId);
+      if (!settlements.length) {
+        div.innerHTML = `<p style="color:#16a34a;font-weight:bold;">No payments needed. Everyone is even.</p>`;
+        return;
+      }
+      div.innerHTML = settlements.map(s => `
+        <div class="settlement">
+          <div><strong>${s.from}</strong> pays <strong>${s.to}</strong></div>
+          <div><strong>${money(s.amount)}</strong></div>
+        </div>
+      `).join("");
+    }
+
+    function renderWeeklySettlement() {
+      const rows = calculateRows();
+      renderSettlement("weeklySettlement", calculateSettlements(rows));
+    }
+
+    function renderMonthlySummary(rows = []) {
+      const tbody = document.getElementById("monthlyBody");
+      tbody.innerHTML = "";
+      rows.forEach(r => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${r.player}</td>
+          <td class="right">${money(r.spent)}</td>
+          <td class="right">${money(r.cashOut)}</td>
+          <td class="right ${r.net >= 0 ? "positive" : "negative"}">${r.net >= 0 ? "+" : ""}${money(r.net)}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+      renderSettlement("monthlySettlement", calculateSettlements(rows));
+    }
+
+    function renderAll() {
+      renderPlayers();
+      renderWeeklySettlement();
+    }
+
+    function addPlayer() {
+      players.push({ name: "", totalBuyins: 1, chipsReturned: 0 });
+      renderAll();
+    }
+
+    function removePlayer(index) {
+      players.splice(index, 1);
+      renderAll();
+    }
+
+    function resetCurrentWeek() {
+      players = players.map(p => ({ name: p.name, totalBuyins: 1, chipsReturned: 0 }));
+      renderAll();
+    }
+
+    function showMessage(text, type) {
+      const msg = document.getElementById("message");
+      msg.textContent = text;
+      msg.className = "message " + type;
+      setTimeout(() => { msg.className = "message"; }, 4000);
+    }
+
+    async function saveWeek() {
+      const settings = getSettings();
+      const rows = calculateRows();
+      if (!settings.gameDate || !settings.monthKey) {
+        showMessage("Please select game date and month.", "error");
+        return;
+      }
+      if (!rows.length) {
+        showMessage("Please enter at least one player name.", "error");
+        return;
+      }
+      if (GOOGLE_SCRIPT_URL.includes("PASTE_")) {
+        showMessage("Add your Google Apps Script URL inside the code first.", "error");
+        return;
+      }
+
+      const payload = {
+        action: "saveWeek",
+        gameDate: settings.gameDate,
+        monthKey: settings.monthKey,
+        buyinAmount: settings.buyinAmount,
+        chipsPerDollar: settings.chipsPerDollar,
+        rows
+      };
+
+      const response = await fetch(GOOGLE_SCRIPT_URL, {
+        method: "POST",
+        body: JSON.stringify(payload)
+      });
+      const result = await response.json();
+      if (result.ok) {
+        showMessage("Week saved to Google Sheets.", "ok");
+        loadMonth();
+      } else {
+        showMessage(result.error || "Save failed.", "error");
+      }
+    }
+
+    async function loadMonth() {
+      const { monthKey } = getSettings();
+      if (GOOGLE_SCRIPT_URL.includes("PASTE_")) {
+        showMessage("Add your Google Apps Script URL inside the code first.", "error");
+        return;
+      }
+      const url = `${GOOGLE_SCRIPT_URL}?action=getMonth&monthKey=${encodeURIComponent(monthKey)}`;
+      const response = await fetch(url);
+      const result = await response.json();
+      if (!result.ok) {
+        showMessage(result.error || "Month load failed.", "error");
+        return;
+      }
+      renderMonthlySummary(result.summary || []);
+      showMessage("Monthly data loaded.", "ok");
+    }
+
+    initDates();
+    renderAll();
+  </script>
+
+</body>
+</html>
