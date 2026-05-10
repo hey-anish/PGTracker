@@ -6,66 +6,51 @@
 <title>Poker Weekly Tracker</title>
 
 <style>
-body {
-  font-family: Arial;
-  background:#f4f6f8;
-  padding:16px;
-}
-
-.container {
-  max-width:1100px;
-  margin:auto;
-  background:white;
-  padding:20px;
-  border-radius:10px;
-}
-
-table {
-  width:100%;
-  border-collapse:collapse;
-  margin-top:10px;
-}
-
-th, td {
-  border-bottom:1px solid #ddd;
-  padding:8px;
-}
-
+body { font-family: Arial; background:#f4f6f8; padding:16px; }
+.container { max-width:1100px; margin:auto; background:white; padding:20px; border-radius:10px; }
+table { width:100%; border-collapse:collapse; margin-top:10px; }
+th, td { border-bottom:1px solid #ddd; padding:8px; }
 .right { text-align:right; }
-
-button {
-  padding:8px 12px;
-  border:none;
-  border-radius:6px;
-  cursor:pointer;
-}
-
+button { padding:8px 12px; border:none; border-radius:6px; cursor:pointer; }
 .add { background:#2563eb; color:white; }
 .reset { background:#6b7280; color:white; }
 .delete { background:#dc2626; color:white; }
-
-.section {
-  margin-top:20px;
-  padding:15px;
-  background:#f9fafb;
-  border-radius:8px;
-}
-
+.section { margin-top:20px; padding:15px; background:#f9fafb; border-radius:8px; }
 .positive { color:green; }
 .negative { color:red; }
-
+.summary-row { display:flex; gap:12px; flex-wrap:wrap; margin-top:12px; }
+.box { flex:1; min-width:180px; background:white; border:1px solid #ddd; border-radius:8px; padding:12px; }
+.box label { display:block; font-weight:bold; margin-bottom:6px; }
+.box input { width:100%; padding:8px; box-sizing:border-box; }
+.big { font-size:22px; font-weight:bold; }
 </style>
 </head>
 
 <body>
-
 <div class="container">
 
 <h2>💰 Poker Weekly Tracker</h2>
 
 <div>
-Buy-in: <input id="buyin" type="number" value="50">
-Chips/$: <input id="chipsRate" type="number" value="4">
+  Buy-in: <input id="buyin" type="number" value="50">
+  Chips/$: <input id="chipsRate" type="number" value="4">
+</div>
+
+<div class="summary-row">
+  <div class="box">
+    <label>Total Buyins Set</label>
+    <input id="totalBuyinsSet" type="number" value="30" min="0">
+  </div>
+
+  <div class="box">
+    <label>Running Total Buyins</label>
+    <div id="runningTotalBuyins" class="big">0</div>
+  </div>
+
+  <div class="box">
+    <label>Remaining Buyins</label>
+    <div id="remainingBuyins" class="big">30</div>
+  </div>
 </div>
 
 <table>
@@ -92,13 +77,13 @@ Chips/$: <input id="chipsRate" type="number" value="4">
 </div>
 
 <div class="section">
-<h3>Audit Log (Auto)</h3>
+<h3>Audit Log - Auto Running Count</h3>
 <table>
 <thead>
 <tr>
 <th>Time</th>
 <th>Player</th>
-<th class="right">Buy-in Count</th>
+<th class="right">Running Buy-in Count</th>
 </tr>
 </thead>
 <tbody id="audit"></tbody>
@@ -108,30 +93,35 @@ Chips/$: <input id="chipsRate" type="number" value="4">
 </div>
 
 <script>
-
 const defaultPlayers = ["SBB","Jay","Naveen","Kiran","Anish","Ranjan","Bhanu","Raj","Krishna","Mandy","Gopi"];
 
 let auditLog = [];
+let runningBuyinTotal = 0;
 
-function money(x){ return "$"+Number(x||0).toFixed(2); }
-
-function nowTime(){
-  return new Date().toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});
+function money(x){
+  return "$" + Number(x || 0).toFixed(2);
 }
 
-function addRow(name="", buyins=1, chips=""){
-  const tbody = document.getElementById("rows");
+function nowTime(){
+  return new Date().toLocaleTimeString([], {
+    hour: "numeric",
+    minute: "2-digit"
+  });
+}
 
+function addRow(name="", buyins=0, chips=""){
+  const tbody = document.getElementById("rows");
   const tr = document.createElement("tr");
+
   tr.dataset.last = buyins;
 
   tr.innerHTML = `
     <td><input value="${name}"></td>
     <td><input type="number" value="${buyins}" class="buy"></td>
     <td><input type="number" value="${chips}" class="chips"></td>
-    <td class="spent"></td>
-    <td class="cash"></td>
-    <td class="net"></td>
+    <td class="spent right"></td>
+    <td class="cash right"></td>
+    <td class="net right"></td>
     <td><button class="delete">X</button></td>
   `;
 
@@ -145,15 +135,17 @@ function addRow(name="", buyins=1, chips=""){
   chipsInput.oninput = calc;
 
   buyInput.oninput = function(){
-    let oldVal = Number(tr.dataset.last);
-    let newVal = Number(this.value);
+    let oldVal = Number(tr.dataset.last || 0);
+    let newVal = Number(this.value || 0);
 
     if(newVal > oldVal){
-      for(let i=oldVal+1;i<=newVal;i++){
+      for(let i = oldVal + 1; i <= newVal; i++){
+        runningBuyinTotal++;
+
         auditLog.push({
           time: nowTime(),
           player: nameInput.value || "Unknown",
-          count: i
+          count: runningBuyinTotal
         });
       }
       renderAudit();
@@ -163,7 +155,7 @@ function addRow(name="", buyins=1, chips=""){
     calc();
   };
 
-  tr.querySelector(".delete").onclick = ()=>{
+  tr.querySelector(".delete").onclick = function(){
     tr.remove();
     calc();
   };
@@ -172,17 +164,15 @@ function addRow(name="", buyins=1, chips=""){
 }
 
 function calc(){
-
-  let buyin = Number(document.getElementById("buyin").value);
-  let rate = Number(document.getElementById("chipsRate").value);
+  let buyin = Number(document.getElementById("buyin").value || 0);
+  let rate = Number(document.getElementById("chipsRate").value || 1);
 
   let totalIn = 0;
   let totalOut = 0;
 
-  document.querySelectorAll("#rows tr").forEach(tr=>{
-
-    let buy = Number(tr.querySelector(".buy").value);
-    let chips = Number(tr.querySelector(".chips").value);
+  document.querySelectorAll("#rows tr").forEach(tr => {
+    let buy = Number(tr.querySelector(".buy").value || 0);
+    let chips = Number(tr.querySelector(".chips").value || 0);
 
     let spent = buy * buyin;
     let cash = chips / rate;
@@ -190,28 +180,38 @@ function calc(){
 
     tr.querySelector(".spent").innerText = money(spent);
     tr.querySelector(".cash").innerText = money(cash);
-    tr.querySelector(".net").innerText = (net>=0?"+":"")+money(net);
-    tr.querySelector(".net").className = "net right " + (net>=0?"positive":"negative");
+    tr.querySelector(".net").innerText = (net >= 0 ? "+" : "") + money(net);
+    tr.querySelector(".net").className = "net right " + (net >= 0 ? "positive" : "negative");
 
     totalIn += spent;
     totalOut += cash;
-
   });
 
   let diff = totalOut - totalIn;
 
   document.getElementById("balance").innerHTML =
-    (Math.abs(diff)<0.01)
-    ? "✅ Balanced (0)"
-    : (diff>0 ? "⚠️ Total is PLUS "+money(diff) : "⚠️ Total is MINUS "+money(diff));
+    Math.abs(diff) < 0.01
+      ? "✅ Balanced (0)"
+      : diff > 0
+        ? "⚠️ Total is PLUS " + money(diff)
+        : "⚠️ Total is MINUS " + money(diff);
 
+  updateBuyinBoxes();
+}
+
+function updateBuyinBoxes(){
+  let totalSet = Number(document.getElementById("totalBuyinsSet").value || 0);
+  let remaining = totalSet - runningBuyinTotal;
+
+  document.getElementById("runningTotalBuyins").innerText = runningBuyinTotal;
+  document.getElementById("remainingBuyins").innerText = remaining;
 }
 
 function renderAudit(){
   let body = document.getElementById("audit");
   body.innerHTML = "";
 
-  auditLog.forEach(a=>{
+  auditLog.forEach(a => {
     body.innerHTML += `
       <tr>
         <td>${a.time}</td>
@@ -220,20 +220,25 @@ function renderAudit(){
       </tr>
     `;
   });
+
+  updateBuyinBoxes();
 }
 
 function reset(){
-  document.getElementById("rows").innerHTML="";
-  auditLog=[];
+  document.getElementById("rows").innerHTML = "";
+  auditLog = [];
+  runningBuyinTotal = 0;
   renderAudit();
-  defaultPlayers.forEach(p=>addRow(p,1,""));
+
+  defaultPlayers.forEach(p => addRow(p, 0, ""));
+  calc();
 }
 
 document.getElementById("buyin").oninput = calc;
 document.getElementById("chipsRate").oninput = calc;
+document.getElementById("totalBuyinsSet").oninput = updateBuyinBoxes;
 
 reset();
-
 </script>
 
 </body>
