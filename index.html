@@ -373,6 +373,10 @@ button.del-btn {
   <button class="save admin-only" onclick="saveActiveGame()">💾 Save Active Game</button>
   <button class="admin-only" onclick="archiveGame()">Archive game</button>
   <button onclick="loadActiveGame()">Refresh</button>
+  <button class="save admin-only" onclick="saveActiveGame()">💾 Save Active Game</button>
+  <button class="save admin-only" onclick="closeGame()">✅ Save Game at End</button>
+  <button class="save admin-only" onclick="monthlySettle()">🏦 Run Monthly Settle</button>
+  <button onclick="viewMonthlySettle()">👀 View Monthly Settle</button>
 </div>
 
 <div class="section">
@@ -758,6 +762,120 @@ function resetGame() {
   setEditMode();
 }
 
+  async function closeGame() {
+  if (!isAdmin) {
+    toast("Read-only mode");
+    return;
+  }
+
+  if (!confirm("Save this game at end and clear ActiveGame?")) return;
+
+  document.getElementById("saveStatus").textContent = "Closing game...";
+
+  try {
+    const gameText = JSON.stringify(buildGameObject());
+    const result = await jsonp("closeGame", { game: gameText });
+
+    if (result.status === "ok") {
+      toast("Game saved to " + result.tabName);
+      document.getElementById("saveStatus").textContent = "Game closed";
+      resetGame();
+      await saveActiveGame();
+    } else {
+      toast(result.message || "Close game failed");
+      document.getElementById("saveStatus").textContent = "Close failed";
+    }
+  } catch (err) {
+    toast(err.message);
+    document.getElementById("saveStatus").textContent = "Close failed";
+  }
+}
+
+async function monthlySettle() {
+  if (!isAdmin) {
+    toast("Only Admin can run monthly settle");
+    return;
+  }
+
+  if (!confirm("Run monthly settle for all unsettled game tabs?")) return;
+
+  document.getElementById("saveStatus").textContent = "Running monthly settle...";
+
+  try {
+    const result = await jsonp("monthlySettle");
+
+    if (result.status === "ok") {
+      document.getElementById("saveStatus").textContent = "Monthly settle complete";
+      showSettlement(result);
+    } else {
+      toast(result.message || "Monthly settle failed");
+      document.getElementById("saveStatus").textContent = "Monthly settle failed";
+    }
+  } catch (err) {
+    toast(err.message);
+    document.getElementById("saveStatus").textContent = "Monthly settle failed";
+  }
+}
+
+async function viewMonthlySettle() {
+  document.getElementById("saveStatus").textContent = "Loading monthly settle...";
+
+  try {
+    const result = await jsonp("loadMonthlySettle");
+
+    if (result.status === "ok") {
+      document.getElementById("saveStatus").textContent = "Monthly settle loaded";
+      showSettlement(result);
+    } else {
+      toast(result.message || "No settlement found");
+    }
+  } catch (err) {
+    toast(err.message);
+  }
+}
+
+function showSettlement(result) {
+  let html = "";
+
+  html += "<h3>Net Totals</h3>";
+
+  if (!result.nets || result.nets.length === 0) {
+    html += "<p>No monthly settlement data found.</p>";
+  } else {
+    html += "<table><thead><tr><th>Player</th><th class='r'>Net</th></tr></thead><tbody>";
+
+    result.nets.forEach(n => {
+      const cls = n.net >= 0 ? "pos" : "neg";
+      const sign = n.net >= 0 ? "+" : "";
+      html += `<tr><td>${n.name}</td><td class="r ${cls}">${sign}${money(n.net)}</td></tr>`;
+    });
+
+    html += "</tbody></table>";
+  }
+
+  html += "<br><h3>Who Pays Whom</h3>";
+
+  if (!result.payments || result.payments.length === 0) {
+    html += "<p>Everyone is settled.</p>";
+  } else {
+    html += "<table><thead><tr><th>Who Pays</th><th>Who Receives</th><th class='r'>Amount</th></tr></thead><tbody>";
+
+    result.payments.forEach(p => {
+      html += `<tr><td>${p.from}</td><td>${p.to}</td><td class="r">${money(p.amount)}</td></tr>`;
+    });
+
+    html += "</tbody></table>";
+  }
+
+  const section = document.getElementById("monthlySettleView");
+  if (section) {
+    section.innerHTML = html;
+    section.scrollIntoView({ behavior: "smooth" });
+  } else {
+    alert("Monthly settlement calculated. Add the monthlySettleView section to display it.");
+  }
+}
+
 async function archiveGame() {
   if (!confirm("Archive this active game?")) return;
 
@@ -771,7 +889,12 @@ async function archiveGame() {
     toast("Archive failed");
   }
 }
-
+<div class="section">
+  <h3>Monthly Settlement View</h3>
+  <div id="monthlySettleView" class="balance-msg">
+    No monthly settlement loaded yet.
+  </div>
+</div>
 document.getElementById("buyin").oninput = calc;
 document.getElementById("chipsRate").oninput = calc;
 document.getElementById("totalBuyinsSet").oninput = updateBuyinBoxes;
