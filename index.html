@@ -34,7 +34,6 @@
 
   .page { max-width: 1100px; margin: auto; }
 
-  /* HEADER */
   header {
     display: flex;
     align-items: center;
@@ -49,311 +48,88 @@
   .logo span { color: var(--accent); }
   .session-date { font-family: var(--mono); font-size: 12px; color: var(--muted); }
 
-  /* TOP CONTROLS */
-  .top-controls {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-    margin-bottom: 20px;
-    align-items: center;
-  }
+  .top-controls { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 20px; align-items: center; }
   .ctrl-group { display: flex; align-items: center; gap: 8px; }
   .ctrl-group label { font-size: 12px; color: var(--muted); font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.05em; }
   .ctrl-group input {
-    width: 80px;
-    padding: 6px 10px;
-    font-size: 14px;
-    font-family: var(--mono);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    background: var(--surface2);
-    color: var(--text);
-    outline: none;
+    width: 80px; padding: 6px 10px; font-size: 14px; font-family: var(--mono);
+    border: 1px solid var(--border); border-radius: var(--radius);
+    background: var(--surface2); color: var(--text); outline: none;
   }
   .ctrl-group input:focus { border-color: var(--accent); }
 
-  /* METRIC CARDS */
-  .metric-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-    gap: 12px;
-    margin-bottom: 20px;
-  }
-  .metric-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 14px 16px;
-  }
-  .metric-card .mlabel {
-    font-size: 11px;
-    color: var(--muted);
-    font-family: var(--mono);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-bottom: 8px;
-  }
-  .metric-card .mval {
-    font-size: 28px;
-    font-family: var(--mono);
-    font-weight: 500;
-    color: var(--accent);
-  }
-  .metric-card input {
-    font-size: 26px;
-    font-family: var(--mono);
-    font-weight: 500;
-    color: var(--accent2);
-    background: transparent;
-    border: none;
-    outline: none;
-    width: 100%;
-    padding: 0;
-  }
-  #remainingBuyins { color: var(--accent); }
+  .metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 20px; }
+  .metric-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; }
+  .metric-card .mlabel { font-size: 11px; color: var(--muted); font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+  .metric-card .mval { font-size: 28px; font-family: var(--mono); font-weight: 500; color: var(--accent); }
+  .metric-card input { font-size: 26px; font-family: var(--mono); font-weight: 500; color: var(--accent2); background: transparent; border: none; outline: none; width: 100%; padding: 0; }
 
-  /* TABLE */
+  .legend { display: flex; gap: 16px; font-size: 11px; font-family: var(--mono); color: var(--muted); margin-bottom: 10px; flex-wrap: wrap; }
+  .legend span { display: flex; align-items: center; gap: 5px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+
   .table-wrap { overflow-x: auto; margin-bottom: 14px; }
   table { width: 100%; border-collapse: collapse; font-size: 13px; }
   thead tr { border-bottom: 1px solid var(--border); }
-  th {
-    font-size: 11px;
-    font-family: var(--mono);
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
-    color: var(--muted);
-    padding: 8px 10px;
-    text-align: left;
-    white-space: nowrap;
-  }
+  th { font-size: 11px; font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); padding: 8px 10px; text-align: left; white-space: nowrap; }
   th.r { text-align: right; }
-  td {
-    padding: 7px 10px;
-    border-bottom: 1px solid var(--border);
-    vertical-align: middle;
-  }
+  td { padding: 7px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
   td.r { text-align: right; font-family: var(--mono); font-size: 13px; }
   tbody tr:hover { background: var(--surface); }
 
-  td input {
-    background: transparent;
-    border: none;
-    outline: none;
-    color: var(--text);
-    font-family: var(--sans);
-    font-size: 13px;
-    width: 100%;
-  }
-  td input.num-in {
-    font-family: var(--mono);
-    text-align: right;
-    width: 60px;
-    border: 1px solid transparent;
-    border-radius: 4px;
-    padding: 3px 6px;
-  }
-  td input.num-in:focus {
-    border-color: var(--border);
-    background: var(--surface2);
-  }
+  td input { background: transparent; border: none; outline: none; color: var(--text); font-family: var(--sans); font-size: 13px; width: 100%; }
+  td input.num-in { font-family: var(--mono); text-align: right; width: 65px; border: 1px solid transparent; border-radius: 4px; padding: 3px 6px; }
+  td input.num-in:focus { border-color: var(--border); background: var(--surface2); }
+  td input.cash-pending { color: var(--danger); }
 
   .pos { color: var(--accent); }
   .neg { color: var(--danger); }
 
-  /* BUTTON ROWS */
-  .btn-row {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-bottom: 20px;
-    align-items: center;
-  }
-
-  button {
-    padding: 8px 16px;
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-    background: var(--surface2);
-    color: var(--text);
-    font-family: var(--sans);
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background 0.15s, border-color 0.15s;
-    white-space: nowrap;
-  }
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; align-items: center; }
+  button { padding: 8px 16px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface2); color: var(--text); font-family: var(--sans); font-size: 13px; font-weight: 500; cursor: pointer; transition: background 0.15s, border-color 0.15s; white-space: nowrap; }
   button:hover { background: var(--surface); border-color: var(--muted); }
   button:disabled { opacity: 0.45; cursor: not-allowed; }
-
   button.primary { background: var(--accent); color: #0f1117; border-color: var(--accent); font-weight: 600; }
-  button.primary:hover { background: #22c55e; border-color: #22c55e; }
-
+  button.primary:hover { background: #22c55e; }
   button.save-btn { background: #1e3a5f; color: #93c5fd; border-color: #2563eb; }
   button.save-btn:hover { background: #1d4ed8; color: white; }
-
   button.settle-btn { background: #3b2a0e; color: var(--accent2); border-color: #ca8a04; }
   button.settle-btn:hover { background: #ca8a04; color: #0f1117; }
-
   button.review-btn { background: #2a1f3d; color: #c4b5fd; border-color: #7c3aed; }
   button.review-btn:hover { background: #7c3aed; color: white; }
-
-  button.del-btn {
-    padding: 3px 8px;
-    font-size: 11px;
-    color: var(--danger);
-    border-color: transparent;
-    background: transparent;
-  }
+  button.del-btn { padding: 3px 8px; font-size: 11px; color: var(--danger); border-color: transparent; background: transparent; }
   button.del-btn:hover { background: #2a1515; border-color: var(--danger); }
 
-  /* SECTION CARDS */
-  .section {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 16px;
-    margin-top: 16px;
-  }
-  .section h3 {
-    font-size: 12px;
-    font-family: var(--mono);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--muted);
-    margin-bottom: 12px;
-  }
-
+  .section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-top: 16px; }
+  .section h3 { font-size: 12px; font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 12px; }
   .balance-msg { font-size: 15px; font-family: var(--mono); }
 
-  /* AUDIT TABLE */
   .audit-tbl { width: 100%; border-collapse: collapse; font-size: 13px; }
-  .audit-tbl th {
-    font-size: 11px;
-    font-family: var(--mono);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--muted);
-    border-bottom: 1px solid var(--border);
-    padding: 6px 8px;
-    text-align: left;
-  }
+  .audit-tbl th { font-size: 11px; font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); border-bottom: 1px solid var(--border); padding: 6px 8px; text-align: left; }
   .audit-tbl th.r, .audit-tbl td.r { text-align: right; }
   .audit-tbl td { border-bottom: 1px solid var(--border); padding: 5px 8px; font-size: 12px; }
 
-  /* MODAL */
-  .modal-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.7);
-    z-index: 100;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-  }
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
   .modal-overlay.open { display: flex; }
-  .modal {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 24px;
-    width: 100%;
-    max-width: 560px;
-    max-height: 80vh;
-    overflow-y: auto;
-  }
-  .modal h2 {
-    font-family: var(--mono);
-    font-size: 15px;
-    margin-bottom: 16px;
-    color: var(--accent2);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-  }
-  .modal-close {
-    float: right;
-    background: transparent;
-    border: none;
-    color: var(--muted);
-    font-size: 20px;
-    cursor: pointer;
-    padding: 0;
-    line-height: 1;
-  }
+  .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; width: 100%; max-width: 560px; max-height: 80vh; overflow-y: auto; }
+  .modal h2 { font-family: var(--mono); font-size: 15px; margin-bottom: 16px; color: var(--accent2); text-transform: uppercase; letter-spacing: 0.06em; }
+  .modal-close { float: right; background: transparent; border: none; color: var(--muted); font-size: 20px; cursor: pointer; padding: 0; line-height: 1; }
   .modal-close:hover { color: var(--text); background: transparent; border: none; }
 
-  .settle-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 0;
-    border-bottom: 1px solid var(--border);
-    font-family: var(--mono);
-    font-size: 13px;
-  }
+  .settle-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); font-family: var(--mono); font-size: 13px; }
   .settle-row:last-child { border-bottom: none; }
   .settle-arrow { color: var(--danger); margin: 0 8px; }
   .settle-amount { color: var(--accent); font-weight: 600; }
+  .net-row { display: flex; justify-content: space-between; padding: 6px 0; font-family: var(--mono); font-size: 13px; border-bottom: 1px solid var(--border); }
 
-  .net-summary { margin-bottom: 16px; }
-  .net-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 6px 0;
-    font-family: var(--mono);
-    font-size: 13px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  /* TOAST */
-  .toast {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 12px 18px;
-    font-size: 13px;
-    font-family: var(--mono);
-    z-index: 200;
-    opacity: 0;
-    transform: translateY(10px);
-    transition: opacity 0.2s, transform 0.2s;
-    pointer-events: none;
-    max-width: 320px;
-  }
+  .toast { position: fixed; bottom: 24px; right: 24px; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 18px; font-size: 13px; font-family: var(--mono); z-index: 200; opacity: 0; transform: translateY(10px); transition: opacity 0.2s, transform 0.2s; pointer-events: none; max-width: 320px; }
   .toast.show { opacity: 1; transform: translateY(0); }
-  .toast.ok { border-color: var(--accent); color: var(--accent); }
+  .toast.ok  { border-color: var(--accent); color: var(--accent); }
   .toast.err { border-color: var(--danger); color: var(--danger); }
 
-  /* URL CONFIG banner */
-  .config-bar {
-    background: #1e2333;
-    border: 1px solid #ca8a04;
-    border-radius: var(--radius);
-    padding: 10px 14px;
-    margin-bottom: 16px;
-    font-size: 12px;
-    font-family: var(--mono);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
+  .config-bar { background: #1e2333; border: 1px solid #ca8a04; border-radius: var(--radius); padding: 10px 14px; margin-bottom: 16px; font-size: 12px; font-family: var(--mono); display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
   .config-bar label { color: var(--accent2); white-space: nowrap; }
-  .config-bar input {
-    flex: 1;
-    min-width: 200px;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    color: var(--text);
-    padding: 5px 8px;
-    font-family: var(--mono);
-    font-size: 12px;
-    outline: none;
-  }
+  .config-bar input { flex: 1; min-width: 200px; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; color: var(--text); padding: 5px 8px; font-family: var(--mono); font-size: 12px; outline: none; }
   .config-bar input:focus { border-color: var(--accent2); }
   .config-bar button { padding: 5px 10px; font-size: 12px; }
 </style>
@@ -366,20 +142,17 @@
     <div class="session-date" id="sessionDate"></div>
   </header>
 
-  <!-- APPS SCRIPT URL CONFIG -->
   <div class="config-bar">
     <label>⚙ Apps Script URL</label>
-    <input id="scriptUrl" type="text" placeholder="https://script.google.com/macros/s/AKfycbz-lbon0kFQ24ZdRX6RZJjUJRPfv26A3aLcMB6c3jbf7rfJ9JgZYIvUGCI6eyxrsS9Q/exec" oninput="saveUrl()">
+    <input id="scriptUrl" type="text" placeholder="Paste your deployed Web App URL here…" oninput="saveUrl()">
     <button onclick="testConnection()">Test</button>
   </div>
 
-  <!-- TOP CONTROLS -->
   <div class="top-controls">
     <div class="ctrl-group"><label>Buy-in $</label><input id="buyin" type="number" value="50"></div>
     <div class="ctrl-group"><label>Chips / $</label><input id="chipsRate" type="number" value="4"></div>
   </div>
 
-  <!-- METRIC CARDS -->
   <div class="metric-grid">
     <div class="metric-card">
       <div class="mlabel">Total buyins set</div>
@@ -395,16 +168,19 @@
     </div>
   </div>
 
-  <!-- PLAYER TABLE -->
+  <div class="legend">
+    <span><span class="dot" style="background:var(--accent2)"></span> Buy-ins: starts at 1 (initial). Increment for each re-buy.</span>
+    <span><span class="dot" style="background:var(--danger)"></span> Cash –$50 = not cashed out yet. Enter chip value when done.</span>
+  </div>
+
   <div class="table-wrap">
     <table>
       <thead>
         <tr>
           <th>Name</th>
           <th class="r">Buy-ins</th>
-          <th class="r">Chips</th>
+          <th class="r">Cash out ($)</th>
           <th class="r">Spent</th>
-          <th class="r">Cash</th>
           <th class="r">Net</th>
           <th></th>
         </tr>
@@ -413,24 +189,21 @@
     </table>
   </div>
 
-  <!-- ACTION BUTTONS -->
   <div class="btn-row">
     <button class="primary" onclick="addRow()">+ Add player</button>
     <button onclick="reset()">Reset</button>
-    <button class="save-btn" onclick="saveWeekData()" id="saveBtn">💾 Save week data</button>
-    <button class="settle-btn" onclick="monthlySettle()" id="settleBtn">🏦 Monthly settle</button>
+    <button class="save-btn"   onclick="saveWeekData()"    id="saveBtn">💾 Save week data</button>
+    <button class="settle-btn" onclick="monthlySettle()"   id="settleBtn">🏦 Monthly settle</button>
     <button class="review-btn" onclick="reviewLastMonth()" id="reviewBtn">📋 Review last month</button>
   </div>
 
-  <!-- BALANCE -->
   <div class="section">
     <h3>Balance</h3>
     <div class="balance-msg" id="balance"></div>
   </div>
 
-  <!-- AUDIT LOG -->
   <div class="section">
-    <h3>Audit log — running buyin count</h3>
+    <h3>Audit log — buyin activity</h3>
     <table class="audit-tbl">
       <thead>
         <tr>
@@ -445,9 +218,8 @@
     <div id="noAudit" style="font-size:12px; color:var(--muted); margin-top:8px; font-family:var(--mono);">No entries yet.</div>
   </div>
 
-</div><!-- /page -->
+</div>
 
-<!-- MODAL -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
     <button class="modal-close" onclick="closeModal()">✕</button>
@@ -456,59 +228,48 @@
   </div>
 </div>
 
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <script>
-// ─── CONFIG ───────────────────────────────────────────────
-const defaultPlayers = ["SBB","Jay","Naveen","Kiran","Anish","Ranjan","Bhanu","Raj","Krishna","Mandy","Gopi"];
+// ─── CONSTANTS ────────────────────────────────────────────
+const defaultPlayers  = ["SBB","Jay","Naveen","Kiran","Anish","Ranjan","Bhanu","Raj","Krishna","Mandy","Gopi"];
+const INITIAL_BUYINS  = 1;      // every player starts with 1 buy-in
+const INITIAL_CASH    = -50;    // placeholder: they haven't cashed out yet
+
 let auditLog = [];
 
-// Load saved URL
+// ─── URL CONFIG ───────────────────────────────────────────
 const urlKey = "pokerScriptUrl";
 document.getElementById("scriptUrl").value = localStorage.getItem(urlKey) || "";
+function saveUrl(){ localStorage.setItem(urlKey, document.getElementById("scriptUrl").value.trim()); }
+function getUrl(){ return (localStorage.getItem(urlKey) || "").trim(); }
 
-function saveUrl(){
-  localStorage.setItem(urlKey, document.getElementById("scriptUrl").value.trim());
-}
-function getUrl(){
-  return (localStorage.getItem(urlKey) || "").trim();
-}
-
-// ─── DATE ─────────────────────────────────────────────────
-function weekLabel(){
-  return "Week " + new Date().toISOString().slice(0,10);
-}
+// ─── DATE HELPERS ─────────────────────────────────────────
+function weekLabel(){ return "Week " + new Date().toISOString().slice(0,10); }
 function monthLabel(offset=0){
-  const d = new Date();
-  d.setMonth(d.getMonth() + offset);
+  const d = new Date(); d.setMonth(d.getMonth() + offset);
   return d.toLocaleString("default",{month:"long"}) + " " + d.getFullYear();
 }
-(function(){
-  document.getElementById("sessionDate").textContent = weekLabel();
-})();
+document.getElementById("sessionDate").textContent = weekLabel();
 
-// ─── UTILITIES ────────────────────────────────────────────
+// ─── UTILS ────────────────────────────────────────────────
 function money(x){ return "$" + Number(x||0).toFixed(2); }
 function nowTime(){ return new Date().toLocaleTimeString([],{hour:"numeric",minute:"2-digit"}); }
 
-function toast(msg, type="ok", dur=3000){
+function toast(msg, type="ok", dur=3500){
   const el = document.getElementById("toast");
-  el.textContent = msg;
-  el.className = "toast show " + type;
+  el.textContent = msg; el.className = "toast show " + type;
   setTimeout(()=>{ el.className = "toast"; }, dur);
 }
-
-function openModal(title, bodyHtml){
+function openModal(title, html){
   document.getElementById("modalTitle").textContent = title;
-  document.getElementById("modalBody").innerHTML = bodyHtml;
+  document.getElementById("modalBody").innerHTML = html;
   document.getElementById("modalOverlay").classList.add("open");
 }
-function closeModal(){
-  document.getElementById("modalOverlay").classList.remove("open");
-}
+function closeModal(){ document.getElementById("modalOverlay").classList.remove("open"); }
 
 // ─── RUNNING TOTAL ────────────────────────────────────────
+// Sums ALL buy-in fields — initial 1s included
 function getRunningTotal(){
   let t = 0;
   document.querySelectorAll("#rows tr").forEach(tr => {
@@ -518,55 +279,84 @@ function getRunningTotal(){
 }
 
 // ─── ADD ROW ──────────────────────────────────────────────
-function addRow(name="", buyins=0, chips=""){
+function addRow(name="", buyins=INITIAL_BUYINS, cashVal=INITIAL_CASH){
   const tbody = document.getElementById("rows");
-  const tr = document.createElement("tr");
+  const tr    = document.createElement("tr");
   tr.dataset.prev = String(buyins);
 
   tr.innerHTML = `
     <td><input class="name-in" value="${name}" placeholder="Player name"></td>
-    <td class="r"><input type="number" value="${buyins}" class="buy num-in" min="0"></td>
-    <td class="r"><input type="number" value="${chips}" class="chips num-in" min="0" placeholder="0"></td>
-    <td class="r spent"></td>
-    <td class="r cash"></td>
-    <td class="r net"></td>
+    <td class="r"><input type="number" value="${buyins}" class="buy num-in" min="1"></td>
+    <td class="r"><input type="number" value="${cashVal}" class="cash-in num-in" style="width:80px"></td>
+    <td class="r spent">—</td>
+    <td class="r net">—</td>
     <td><button class="del-btn" onclick="removeRow(this)">✕</button></td>
   `;
 
   tbody.appendChild(tr);
 
-  const nameIn  = tr.querySelector(".name-in");
-  const buyIn   = tr.querySelector(".buy");
-  const chipsIn = tr.querySelector(".chips");
+  const nameIn = tr.querySelector(".name-in");
+  const buyIn  = tr.querySelector(".buy");
+  const cashIn = tr.querySelector(".cash-in");
 
+  // Style cash field red while it's still the placeholder
+  function styleCash(){
+    const v = Number(cashIn.value);
+    cashIn.classList.toggle("cash-pending", v === INITIAL_CASH);
+  }
+  styleCash();
+  cashIn.oninput = () => { styleCash(); calc(); };
   nameIn.oninput = calc;
-  chipsIn.oninput = calc;
 
+  // Buy-in input: only log INCREASES from the starting value
+  // (initial 1 is logged once when the row is created, below)
   buyIn.oninput = function(){
-    const prev = Number(tr.dataset.prev || 0);
-    const curr = Number(this.value || 0);
+    const prev = Number(tr.dataset.prev || INITIAL_BUYINS);
+    const curr = Number(this.value || INITIAL_BUYINS);
+    if(curr < 1){ this.value = 1; return; }  // enforce minimum
+
     const diff = curr - prev;
     if(diff !== 0){
-      auditLog.push({ time: nowTime(), player: nameIn.value||"Unknown", diff, total: getRunningTotal() });
+      auditLog.push({
+        time:   nowTime(),
+        player: nameIn.value || "Unknown",
+        diff,
+        total:  getRunningTotal()   // already updated since input fired
+      });
       renderAudit();
     }
     tr.dataset.prev = String(curr);
     calc();
   };
 
+  // Log the initial buy-in immediately after the row is in the DOM
+  // (use setTimeout so getRunningTotal() counts this new row)
+  setTimeout(() => {
+    auditLog.push({
+      time:   nowTime(),
+      player: nameIn.value || name || "Player",
+      diff:   INITIAL_BUYINS,
+      total:  getRunningTotal()
+    });
+    renderAudit();
+  }, 0);
+
   calc();
 }
 
 function removeRow(btn){
-  const tr = btn.closest("tr");
+  const tr     = btn.closest("tr");
   const nameIn = tr.querySelector(".name-in");
-  const curr = Number(tr.querySelector(".buy").value || 0);
+  const curr   = Number(tr.querySelector(".buy").value || 0);
+  tr.remove();
   if(curr > 0){
-    tr.remove();
-    auditLog.push({ time: nowTime(), player: nameIn?.value||"Unknown", diff: -curr, total: getRunningTotal() });
+    auditLog.push({
+      time:   nowTime(),
+      player: nameIn?.value || "Unknown",
+      diff:   -curr,
+      total:  getRunningTotal()
+    });
     renderAudit();
-  } else {
-    tr.remove();
   }
   calc();
 }
@@ -574,34 +364,49 @@ function removeRow(btn){
 // ─── CALC ─────────────────────────────────────────────────
 function calc(){
   const buyin = Number(document.getElementById("buyin").value || 0);
-  const rate  = Number(document.getElementById("chipsRate").value || 1);
-  let totalIn = 0, totalOut = 0;
+  let totalSpent = 0, totalCashedOut = 0, cashedCount = 0;
 
   document.querySelectorAll("#rows tr").forEach(tr => {
-    const buy   = Number(tr.querySelector(".buy").value   || 0);
-    const chips = Number(tr.querySelector(".chips").value || 0);
+    const buy   = Number(tr.querySelector(".buy").value     || 0);
+    const cash  = Number(tr.querySelector(".cash-in").value);   // may be INITIAL_CASH
     const spent = buy * buyin;
-    const cash  = chips / rate;
-    const net   = cash - spent;
 
     tr.querySelector(".spent").textContent = money(spent);
-    tr.querySelector(".cash").textContent  = money(cash);
+    totalSpent += spent;
+
+    // Net is always cash - spent.
+    // If cash is still the placeholder, net shows the hole they're in (e.g. –$50)
+    const net   = cash - spent;
     const netEl = tr.querySelector(".net");
     netEl.textContent = (net >= 0 ? "+" : "") + money(net);
     netEl.className   = "r net " + (net >= 0 ? "pos" : "neg");
 
-    totalIn  += spent;
-    totalOut += cash;
+    // Only add to cash-out total if player actually cashed out
+    if(cash !== INITIAL_CASH){ totalCashedOut += cash; cashedCount++; }
   });
 
-  const diff = totalOut - totalIn;
+  // Balance only considers cashed-out players vs what they spent
+  const spentByCashedOut = (() => {
+    let s = 0;
+    document.querySelectorAll("#rows tr").forEach(tr => {
+      const cash = Number(tr.querySelector(".cash-in").value);
+      if(cash !== INITIAL_CASH) s += Number(tr.querySelector(".buy").value || 0) * buyin;
+    });
+    return s;
+  })();
+
+  const diff  = totalCashedOut - spentByCashedOut;
   const balEl = document.getElementById("balance");
-  if(Math.abs(diff) < 0.01){
-    balEl.textContent  = "✅ Balanced (0)";
-    balEl.style.color  = "var(--accent)";
+
+  if(cashedCount === 0){
+    balEl.textContent = "⏳ Waiting for players to cash out…";
+    balEl.style.color = "var(--muted)";
+  } else if(Math.abs(diff) < 0.01){
+    balEl.textContent = "✅ Balanced (0)";
+    balEl.style.color = "var(--accent)";
   } else {
-    balEl.textContent  = (diff > 0 ? "⚠ PLUS " : "⚠ MINUS ") + money(Math.abs(diff));
-    balEl.style.color  = "var(--danger)";
+    balEl.textContent = (diff > 0 ? "⚠ PLUS " : "⚠ MINUS ") + money(Math.abs(diff));
+    balEl.style.color = "var(--danger)";
   }
 
   updateBuyinBoxes();
@@ -621,56 +426,53 @@ function renderAudit(){
   const noAudit = document.getElementById("noAudit");
   body.innerHTML = "";
   auditLog.forEach(a => {
-    const abs    = Math.abs(a.diff);
-    const label  = abs === 1 ? "buyin" : "buyins";
-    const str    = a.diff > 0 ? `+${a.diff} ${label}` : `${a.diff} ${label}`;
-    const color  = a.diff > 0 ? "var(--accent)" : "var(--danger)";
+    const abs   = Math.abs(a.diff);
+    const label = abs === 1 ? "buyin" : "buyins";
+    const str   = a.diff > 0 ? `+${a.diff} ${label}` : `${a.diff} ${label}`;
+    const color = a.diff > 0 ? "var(--accent)" : "var(--danger)";
     body.innerHTML += `<tr>
-      <td style="color:var(--muted); font-family:var(--mono); font-size:11px">${a.time}</td>
+      <td style="color:var(--muted);font-family:var(--mono);font-size:11px">${a.time}</td>
       <td>${a.player}</td>
-      <td style="color:${color}; font-family:var(--mono)">${str}</td>
-      <td class="r" style="font-family:var(--mono); font-weight:600">${a.total}</td>
+      <td style="color:${color};font-family:var(--mono)">${str}</td>
+      <td class="r" style="font-family:var(--mono);font-weight:600">${a.total}</td>
     </tr>`;
   });
   noAudit.style.display = auditLog.length ? "none" : "block";
   updateBuyinBoxes();
 }
 
+// ─── RESET ────────────────────────────────────────────────
 function reset(){
   document.getElementById("rows").innerHTML = "";
   auditLog = [];
   renderAudit();
-  defaultPlayers.forEach(p => addRow(p, 0, ""));
+  // Add all default players — each starts with buyins=1, cash=-50
+  defaultPlayers.forEach(p => addRow(p, INITIAL_BUYINS, INITIAL_CASH));
   calc();
 }
 
-// ─── GET CURRENT PLAYER DATA ──────────────────────────────
+// ─── PLAYER DATA FOR SAVE ─────────────────────────────────
 function getPlayerData(){
   const buyin = Number(document.getElementById("buyin").value || 0);
-  const rate  = Number(document.getElementById("chipsRate").value || 1);
-  const players = [];
+  const rows  = [];
   document.querySelectorAll("#rows tr").forEach(tr => {
     const name  = tr.querySelector(".name-in").value.trim();
-    const buy   = Number(tr.querySelector(".buy").value   || 0);
-    const chips = Number(tr.querySelector(".chips").value || 0);
+    const buy   = Number(tr.querySelector(".buy").value || 0);
+    const cash  = Number(tr.querySelector(".cash-in").value);
     if(!name) return;
     const spent = buy * buyin;
-    const cash  = chips / rate;
     const net   = cash - spent;
-    players.push({ name, buyins: buy, chips, spent, cash, net });
+    rows.push({ name, buyins: buy, cash, spent, net });
   });
-  return players;
+  return rows;
 }
 
-// ─── API CALL HELPER ──────────────────────────────────────
+// ─── API HELPER ───────────────────────────────────────────
 async function callScript(payload){
   const url = getUrl();
   if(!url){ toast("⚠ Paste your Apps Script URL first", "err"); return null; }
   try {
-    const res = await fetch(url, {
-      method: "POST",
-      body: JSON.stringify(payload)
-    });
+    const res = await fetch(url, { method:"POST", body: JSON.stringify(payload) });
     return await res.json();
   } catch(e){
     toast("❌ Network error: " + e.message, "err", 5000);
@@ -678,143 +480,91 @@ async function callScript(payload){
   }
 }
 
-// ─── TEST CONNECTION ──────────────────────────────────────
+// ─── ACTIONS ──────────────────────────────────────────────
 async function testConnection(){
-  const r = await callScript({ action: "ping" });
-  if(r && r.status === "ok") toast("✅ Connected!", "ok");
+  const r = await callScript({ action:"ping" });
+  if(r && r.status==="ok") toast("✅ Connected!", "ok");
   else toast("❌ Connection failed — check URL", "err");
 }
 
-// ─── SAVE WEEK DATA ───────────────────────────────────────
 async function saveWeekData(){
   const players = getPlayerData();
   if(!players.length){ toast("No player data to save", "err"); return; }
-
   const btn = document.getElementById("saveBtn");
   btn.disabled = true; btn.textContent = "Saving…";
-
   const r = await callScript({
-    action:  "saveWeek",
-    week:    weekLabel(),
-    buyin:   Number(document.getElementById("buyin").value),
-    rate:    Number(document.getElementById("chipsRate").value),
+    action:"saveWeek", week: weekLabel(),
+    buyin: Number(document.getElementById("buyin").value),
+    rate:  Number(document.getElementById("chipsRate").value),
     players
   });
-
   btn.disabled = false; btn.textContent = "💾 Save week data";
-
-  if(r && r.status === "ok"){
-    toast("✅ Week saved to sheet: " + weekLabel(), "ok");
-  } else {
-    toast("❌ Save failed: " + (r?.message || "unknown error"), "err", 5000);
-  }
+  if(r && r.status==="ok") toast("✅ Week saved: " + weekLabel(), "ok");
+  else toast("❌ Save failed: " + (r?.message||"unknown"), "err", 5000);
 }
 
-// ─── MONTHLY SETTLE ───────────────────────────────────────
 async function monthlySettle(){
   const btn = document.getElementById("settleBtn");
   btn.disabled = true; btn.textContent = "Calculating…";
-
-  const r = await callScript({ action: "monthlySettle", month: monthLabel() });
-
+  const r = await callScript({ action:"monthlySettle", month: monthLabel() });
   btn.disabled = false; btn.textContent = "🏦 Monthly settle";
-
-  if(!r || r.status !== "ok"){
-    toast("❌ " + (r?.message || "Failed to settle"), "err", 5000);
-    return;
-  }
-
-  // Build modal
-  const { nets, payments } = r;
-
-  let html = `<div class="net-summary">`;
-  html += `<div style="font-size:11px; color:var(--muted); font-family:var(--mono); text-transform:uppercase; letter-spacing:.07em; margin-bottom:8px;">Net totals — ${monthLabel()}</div>`;
-  nets.forEach(n => {
-    const col = n.net >= 0 ? "var(--accent)" : "var(--danger)";
-    const sign = n.net >= 0 ? "+" : "";
-    html += `<div class="net-row"><span>${n.name}</span><span style="color:${col}; font-family:var(--mono)">${sign}${money(n.net)}</span></div>`;
-  });
-  html += `</div>`;
-
-  if(payments && payments.length){
-    html += `<div style="font-size:11px; color:var(--muted); font-family:var(--mono); text-transform:uppercase; letter-spacing:.07em; margin:16px 0 8px;">Who pays whom</div>`;
-    payments.forEach(p => {
-      html += `<div class="settle-row">
-        <span>${p.from}</span>
-        <span class="settle-arrow">→</span>
-        <span>${p.to}</span>
-        <span class="settle-amount">${money(p.amount)}</span>
-      </div>`;
-    });
-  } else {
-    html += `<div style="color:var(--accent); font-family:var(--mono); font-size:13px; margin-top:8px;">✅ Everyone is square!</div>`;
-  }
-
-  html += `<div style="margin-top:16px; text-align:right">
-    <button class="settle-btn" onclick="confirmSettle()">✅ Confirm &amp; save to sheet</button>
-  </div>`;
-
-  // Stash for confirm
+  if(!r || r.status!=="ok"){ toast("❌ " + (r?.message||"Failed"), "err", 5000); return; }
   window._pendingSettle = r;
-
-  openModal("Monthly settle — " + monthLabel(), html);
+  openModal("Monthly settle — " + monthLabel(), buildSettleHtml(r, true));
 }
 
 async function confirmSettle(){
-  const r = await callScript({
-    action: "saveMonthlySettle",
-    month:  monthLabel(),
-    data:   window._pendingSettle
-  });
+  const r = await callScript({ action:"saveMonthlySettle", month: monthLabel(), data: window._pendingSettle });
   closeModal();
-  if(r && r.status === "ok") toast("✅ Settlement saved to sheet", "ok");
-  else toast("❌ " + (r?.message || "Save failed"), "err", 5000);
+  if(r && r.status==="ok") toast("✅ Settlement saved to sheet", "ok");
+  else toast("❌ " + (r?.message||"Save failed"), "err", 5000);
 }
 
-// ─── REVIEW LAST MONTH ────────────────────────────────────
 async function reviewLastMonth(){
   const btn = document.getElementById("reviewBtn");
   btn.disabled = true; btn.textContent = "Loading…";
-
-  const r = await callScript({ action: "reviewMonth", month: monthLabel(-1) });
-
+  const r = await callScript({ action:"reviewMonth", month: monthLabel(-1) });
   btn.disabled = false; btn.textContent = "📋 Review last month";
+  if(!r || r.status!=="ok"){ toast("❌ " + (r?.message||"No data"), "err", 5000); return; }
+  openModal("Last month — " + monthLabel(-1), buildSettleHtml(r, false));
+}
 
-  if(!r || r.status !== "ok"){
-    toast("❌ " + (r?.message || "No data found for last month"), "err", 5000);
-    return;
-  }
-
+function buildSettleHtml(r, showConfirm){
   const { nets, payments } = r;
-  let html = `<div class="net-summary">`;
-  html += `<div style="font-size:11px; color:var(--muted); font-family:var(--mono); text-transform:uppercase; letter-spacing:.07em; margin-bottom:8px;">Net totals — ${monthLabel(-1)}</div>`;
+  let html = `<div style="margin-bottom:16px">
+    <div style="font-size:11px;color:var(--muted);font-family:var(--mono);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">Net totals</div>`;
   nets.forEach(n => {
-    const col = n.net >= 0 ? "var(--accent)" : "var(--danger)";
+    const col  = n.net >= 0 ? "var(--accent)" : "var(--danger)";
     const sign = n.net >= 0 ? "+" : "";
-    html += `<div class="net-row"><span>${n.name}</span><span style="color:${col}; font-family:var(--mono)">${sign}${money(n.net)}</span></div>`;
+    html += `<div class="net-row"><span>${n.name}</span><span style="color:${col};font-family:var(--mono)">${sign}${money(n.net)}</span></div>`;
   });
   html += `</div>`;
 
   if(payments && payments.length){
-    html += `<div style="font-size:11px; color:var(--muted); font-family:var(--mono); text-transform:uppercase; letter-spacing:.07em; margin:16px 0 8px;">Settlements</div>`;
+    html += `<div style="font-size:11px;color:var(--muted);font-family:var(--mono);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">Who pays whom</div>`;
     payments.forEach(p => {
       html += `<div class="settle-row">
-        <span>${p.from}</span>
-        <span class="settle-arrow">→</span>
-        <span>${p.to}</span>
-        <span class="settle-amount">${money(p.amount)}</span>
+        <span>${p.from}</span><span class="settle-arrow">→</span>
+        <span>${p.to}</span><span class="settle-amount">${money(p.amount)}</span>
       </div>`;
     });
+  } else {
+    html += `<div style="color:var(--accent);font-family:var(--mono);font-size:13px;margin-top:8px">✅ Everyone is square!</div>`;
   }
 
-  openModal("Last month — " + monthLabel(-1), html);
+  if(showConfirm){
+    html += `<div style="margin-top:16px;text-align:right">
+      <button class="settle-btn" onclick="confirmSettle()">✅ Confirm &amp; save to sheet</button>
+    </div>`;
+  }
+  return html;
 }
 
 // ─── INIT ─────────────────────────────────────────────────
-document.getElementById("buyin").oninput = calc;
-document.getElementById("chipsRate").oninput = calc;
-document.getElementById("totalBuyinsSet").oninput = updateBuyinBoxes;
-document.getElementById("modalOverlay").onclick = function(e){ if(e.target === this) closeModal(); };
+document.getElementById("buyin").oninput           = calc;
+document.getElementById("chipsRate").oninput       = calc;
+document.getElementById("totalBuyinsSet").oninput  = updateBuyinBoxes;
+document.getElementById("modalOverlay").onclick    = function(e){ if(e.target===this) closeModal(); };
 
 reset();
 </script>
