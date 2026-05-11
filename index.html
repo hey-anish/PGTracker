@@ -273,7 +273,8 @@ function closeModal(){ document.getElementById("modalOverlay").classList.remove(
 function getRunningTotal(){
   let t = 0;
   document.querySelectorAll("#rows tr").forEach(tr => {
-    t += Number(tr.querySelector(".buy").value || 0);
+    const buyins = Number(tr.querySelector(".buy").value || INITIAL_BUYINS);
+    t += Math.max(0, buyins - INITIAL_BUYINS);
   });
   return t;
 }
@@ -310,36 +311,42 @@ function addRow(name="", buyins=INITIAL_BUYINS, cashVal=INITIAL_CASH){
 
   // Buy-in input: only log INCREASES from the starting value
   // (initial 1 is logged once when the row is created, below)
-  buyIn.oninput = function(){
-    const prev = Number(tr.dataset.prev || INITIAL_BUYINS);
-    const curr = Number(this.value || INITIAL_BUYINS);
-    if(curr < 1){ this.value = 1; return; }  // enforce minimum
+ buyIn.oninput = function(){
+  const prev = Number(tr.dataset.prev || INITIAL_BUYINS);
+  let curr = Number(this.value || INITIAL_BUYINS);
 
-    const diff = curr - prev;
-    if(diff !== 0){
+  if(curr < 1){
+    curr = 1;
+    this.value = 1;
+  }
+
+  if(curr > prev){
+    for(let i = prev + 1; i <= curr; i++){
       auditLog.push({
-        time:   nowTime(),
+        time: nowTime(),
         player: nameIn.value || "Unknown",
-        diff,
-        total:  getRunningTotal()   // already updated since input fired
+        diff: 1,
+        total: getRunningTotal()
       });
-      renderAudit();
     }
-    tr.dataset.prev = String(curr);
-    calc();
-  };
+    renderAudit();
+  }
 
-  // Log the initial buy-in immediately after the row is in the DOM
-  // (use setTimeout so getRunningTotal() counts this new row)
-  setTimeout(() => {
+  if(curr < prev){
     auditLog.push({
-      time:   nowTime(),
-      player: nameIn.value || name || "Player",
-      diff:   INITIAL_BUYINS,
-      total:  getRunningTotal()
+      time: nowTime(),
+      player: nameIn.value || "Unknown",
+      diff: curr - prev,
+      total: getRunningTotal()
     });
     renderAudit();
-  }, 0);
+  }
+
+  tr.dataset.prev = String(curr);
+  calc();
+};
+
+
 
   calc();
 }
