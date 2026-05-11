@@ -111,7 +111,7 @@ input:disabled {
 }
 
 .ctrl-group input {
-  width:90px;
+  width:95px;
   font-family:var(--mono);
 }
 
@@ -244,6 +244,12 @@ button.primary {
   font-weight:600;
 }
 
+button.save {
+  background:#1e3a5f;
+  border-color:#2563eb;
+  color:#bfdbfe;
+}
+
 button.del-btn {
   background:transparent;
   color:var(--danger);
@@ -364,6 +370,7 @@ button.del-btn {
 <div class="btn-row">
   <button class="primary admin-only" onclick="addRow()">+ Add player</button>
   <button class="admin-only" onclick="resetGame()">Reset active game</button>
+  <button class="save admin-only" onclick="saveActiveGame()">💾 Save Active Game</button>
   <button class="admin-only" onclick="archiveGame()">Archive game</button>
   <button onclick="loadActiveGame()">Refresh</button>
 </div>
@@ -395,7 +402,7 @@ button.del-btn {
 <div class="toast" id="toast"></div>
 
 <script>
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyaCj6OkDAEtF9LQoGdjkkXytmP-hj1vKhQ3z55ebupeUKR_-BpdqPEkjIe5LzqCNH9/exec";
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwCCgAwxry-cVX1t7q-loWSxrUKpRWAipexDx_yf3a1TX6DyWqthDvY1aiTulc-CvuD/exec";
 
 const ADMIN_ID = "Admin";
 const ADMIN_PASSWORD = "Poker";
@@ -409,7 +416,6 @@ const INITIAL_BUYINS = 1;
 
 let auditLog = [];
 let isAdmin = sessionStorage.getItem("pokerAdmin") === "yes";
-let saveTimer = null;
 let loadingRemote = false;
 
 function today() {
@@ -431,7 +437,35 @@ function toast(msg) {
   const t = document.getElementById("toast");
   t.textContent = msg;
   t.classList.add("show");
-  setTimeout(() => t.classList.remove("show"), 2500);
+  setTimeout(() => t.classList.remove("show"), 3000);
+}
+
+function jsonp(action, params = {}) {
+  return new Promise((resolve, reject) => {
+    const callbackName = "cb_" + Date.now() + "_" + Math.floor(Math.random() * 10000);
+
+    window[callbackName] = function(data) {
+      delete window[callbackName];
+      script.remove();
+      resolve(data);
+    };
+
+    const query = new URLSearchParams();
+    query.set("action", action);
+    query.set("callback", callbackName);
+
+    Object.keys(params).forEach(k => query.set(k, params[k]));
+
+    const script = document.createElement("script");
+    script.src = APPS_SCRIPT_URL + "?" + query.toString();
+    script.onerror = function() {
+      delete window[callbackName];
+      script.remove();
+      reject(new Error("Script load failed"));
+    };
+
+    document.body.appendChild(script);
+  });
 }
 
 function adminLogin() {
@@ -467,20 +501,6 @@ function setEditMode() {
   document.querySelectorAll(".admin-only").forEach(btn => {
     btn.disabled = !isAdmin;
   });
-}
-
-async function apiGet(action) {
-  const url = APPS_SCRIPT_URL + "?action=" + encodeURIComponent(action);
-  const res = await fetch(url);
-  return await res.json();
-}
-
-async function apiPost(payload) {
-  const res = await fetch(APPS_SCRIPT_URL, {
-    method: "POST",
-    body: JSON.stringify(payload)
-  });
-  return await res.json();
 }
 
 function getRunningAdditionalBuyins() {
@@ -526,15 +546,8 @@ function addRow(name = "", additionalBuyins = 0, chipsReturned = "") {
   const addBuyIn = tr.querySelector(".additional-buyins");
   const chipsIn = tr.querySelector(".chips-returned");
 
-  nameIn.oninput = () => {
-    calc();
-    scheduleSave();
-  };
-
-  chipsIn.oninput = () => {
-    calc();
-    scheduleSave();
-  };
+  nameIn.oninput = calc;
+  chipsIn.oninput = calc;
 
   addBuyIn.oninput = function() {
     const prev = Number(tr.dataset.prevAdditional || 0);
@@ -561,7 +574,6 @@ function addRow(name = "", additionalBuyins = 0, chipsReturned = "") {
 
     tr.dataset.prevAdditional = String(curr);
     calc();
-    scheduleSave();
   };
 
   calc();
@@ -571,7 +583,6 @@ function addRow(name = "", additionalBuyins = 0, chipsReturned = "") {
 function removeRow(btn) {
   btn.closest("tr").remove();
   calc();
-  scheduleSave();
 }
 
 function calc() {
@@ -686,31 +697,29 @@ function loadGameObject(game) {
   loadingRemote = false;
 }
 
-function scheduleSave() {
-  if (!isAdmin || loadingRemote) return;
-
-  clearTimeout(saveTimer);
-
-  saveTimer = setTimeout(() => {
-    saveActiveGame();
-  }, 700);
-}
-
 async function saveActiveGame() {
-  if (!isAdmin) return;
+  if (!isAdmin) {
+    toast("Read-only mode");
+    return;
+  }
 
   document.getElementById("saveStatus").textContent = "Saving...";
 
-  const result = await apiPost({
-    action: "save",
-    game: buildGameObject()
-  });
+  try {
+    const gameText = JSON.stringify(buildGameObject());
+    const result = await jsonp("save", { game: gameText });
 
-  if (result.status === "ok") {
-    document.getElementById("saveStatus").textContent =
-      "Saved " + new Date().toLocaleTimeString([], {hour:"numeric", minute:"2-digit"});
-  } else {
+    if (result.status === "ok") {
+      document.getElementById("saveStatus").textContent =
+        "Saved " + new Date().toLocaleTimeString([], {hour:"numeric", minute:"2-digit"});
+      toast("Saved successfully");
+    } else {
+      document.getElementById("saveStatus").textContent = "Save failed";
+      toast(result.message || "Save failed");
+    }
+  } catch (err) {
     document.getElementById("saveStatus").textContent = "Save failed";
+    toast(err.message);
   }
 }
 
@@ -718,7 +727,7 @@ async function loadActiveGame() {
   document.getElementById("saveStatus").textContent = "Loading...";
 
   try {
-    const result = await apiGet("load");
+    const result = await jsonp("load");
 
     if (result.status === "ok" && result.game) {
       loadGameObject(result.game);
@@ -728,11 +737,12 @@ async function loadActiveGame() {
       document.getElementById("saveStatus").textContent = "New active game";
     }
   } catch (err) {
-    document.getElementById("saveStatus").textContent = "Load failed";
+    resetGame(false);
+    document.getElementById("saveStatus").textContent = "Load failed - default loaded";
   }
 }
 
-function resetGame(save = true) {
+function resetGame() {
   document.getElementById("rows").innerHTML = "";
   auditLog = [];
 
@@ -746,16 +756,13 @@ function resetGame(save = true) {
   renderAudit();
   calc();
   setEditMode();
-
-  if (save) scheduleSave();
 }
 
 async function archiveGame() {
   if (!confirm("Archive this active game?")) return;
 
-  const result = await apiPost({
-    action: "archive",
-    game: buildGameObject()
+  const result = await jsonp("archive", {
+    game: JSON.stringify(buildGameObject())
   });
 
   if (result.status === "ok") {
@@ -765,16 +772,12 @@ async function archiveGame() {
   }
 }
 
-document.getElementById("buyin").oninput = () => { calc(); scheduleSave(); };
-document.getElementById("chipsRate").oninput = () => { calc(); scheduleSave(); };
-document.getElementById("totalBuyinsSet").oninput = () => { updateBuyinBoxes(); scheduleSave(); };
-document.getElementById("gameDate").oninput = scheduleSave;
+document.getElementById("buyin").oninput = calc;
+document.getElementById("chipsRate").oninput = calc;
+document.getElementById("totalBuyinsSet").oninput = updateBuyinBoxes;
+document.getElementById("gameDate").oninput = function(){};
 
 loadActiveGame();
-
-setInterval(() => {
-  if (!isAdmin) loadActiveGame();
-}, 10000);
 </script>
 
 </body>
